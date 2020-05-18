@@ -123,6 +123,15 @@
     <ClInclude Include="PowerUpType.h">
       <Filter>Header Files\GameComponents</Filter>
     </ClInclude>
+    <ClInclude Include="LevelState.h">
+      <Filter>Header Files\GUIEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="GameOverState.h">
+      <Filter>Header Files\GUIEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="GameLostState.h">
+      <Filter>Header Files\GUIEngine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp">
@@ -181,6 +190,15 @@
     </ClCompile>
     <ClCompile Include="Portal.cpp">
       <Filter>Source Files\GameComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelState.cpp">
+      <Filter>Source Files\GUIEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="GameOverState.cpp">
+      <Filter>Source Files\GUIEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="GameLostState.cpp">
+      <Filter>Source Files\GUIEngine</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

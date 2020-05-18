@@ -3,6 +3,7 @@
 #include "StateMachine.h"
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 class IntroState : public State
 {
@@ -18,7 +19,6 @@ public:
 private:
 	sf::Texture m_bgTexture;
 	sf::Sprite m_bg;
-	uint16_t m_selectedItemIndex;
-	sf::Font m_font;
-	sf::Text m_menu[2];
+	sf::Sound m_sound;
+	sf::SoundBuffer m_soundBuffer;
 };

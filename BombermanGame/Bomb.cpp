@@ -57,16 +57,6 @@ void Bomb::SetBombStatus(bool status)
 	m_bombExploded = status;
 }
 
-//void Bomb::operator=(const Bomb& other)
-//{
-//	m_bombShape = other.m_bombShape;
-//	m_bombTexture = other.m_bombTexture;
-//	m_animation = other.m_animation;
-//	m_radius = other.m_radius;
-//	m_bombExploded = other.m_bombExploded;
-//	m_triggeredTime = other.m_triggeredTime;
-//}
-
 void Bomb::Explode()
 {
 	m_bombExploded = true;

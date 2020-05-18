@@ -21,12 +21,16 @@ public:
 	float GetPositionY() const;
 	float GetPlayerSpeed() const;
 	bool GetCanPlaceBomb() const;
+	uint16_t GetMaxNoBombs() const;
 	Collider GetCollider();
+	static uint16_t GetNumberOfLives();
 
 public:
+	void SetMaxNoBombs(uint16_t newMaximum);
 	void SetPositionX(float newPositionX);
 	void SetPositionY(float newPositionY);
 	void SetCanPlaceBomb(bool isPossible);
+	static void SetNumberOfLives(uint16_t life);
 
 public:
 	void MovePlayer(float deltaTime);
@@ -40,7 +44,13 @@ private:
 	const float m_playerHeight = 45.f;
 	const float m_playerWidth = 45.f;
 	const float m_timeAnimationPlayer = 0.6f;
+
+private:
 	bool m_placeBomb = true;
+	static uint16_t m_numberOfLives;
+	uint16_t m_maximumNoBombs = 3;
+
+private:
 	sf::RectangleShape m_playerShape;
 	sf::RectangleShape m_secondaryShape;
 	sf::Texture m_playerTexture;

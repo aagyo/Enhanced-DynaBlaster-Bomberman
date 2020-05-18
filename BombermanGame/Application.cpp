@@ -3,7 +3,7 @@
 void Application::Run()
 {
 	// Create render window
-	m_window.create(sf::VideoMode(m_windowSize, m_windowSize), ' ', sf::Style::Resize);
+	m_window.create(sf::VideoMode(m_windowSize, m_windowSize + 48), ' ', sf::Style::Resize);
 	m_window.setFramerateLimit(m_framesPerSecond);
 
 	// Initialize the engine

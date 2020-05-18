@@ -3,6 +3,7 @@
 #include "StateMachine.h"
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 class MenuState : public State
 {
@@ -18,6 +19,6 @@ public:
 private:
 	sf::Texture m_bgTexture;
 	sf::Sprite m_bg;
-	sf::RectangleShape m_fader;
-	sf::Color m_alpha;
+	sf::Sound m_sound;
+	sf::SoundBuffer m_soundBuffer;
 };

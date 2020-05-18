@@ -8,6 +8,7 @@
 #include "Explosion.h"
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 class PlayState : public State
 {
@@ -23,15 +24,25 @@ public:
 public:
 	void CreateMap();
 	void CheckForCollision();
-	sf::Time GetElapsedTime() const;
+
+public:
 	bool IsPlayerOnTeleport();
 	bool IsPlayerOnPowerUp();
-	void ChangeBlocks();
+
+public:
+	sf::Time GetElapsedTime() const;
+
+private:
+	void CreateExplosions();
+	void DrawExplosion(Bomb* thisBomb, uint16_t thisIndex);
+	void InsertExplosion(Bomb *thisBomb);
 
 private:
 	Map m_map;
-	Explosion *m_explosion;
+	std::vector<Explosion*> m_explosionsList;
 	Player m_player;
-	Bomb *m_bomb;
+	const uint16_t m_bombRadius = 2;
 	GameClock m_clock;
+	sf::Sound m_sound;
+	sf::SoundBuffer m_soundBuffer;
 };

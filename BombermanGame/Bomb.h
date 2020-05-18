@@ -24,7 +24,6 @@ public:
 
 public:
 	void Update(float elapsedTime);
-	void operator=(const Bomb& bomb);
 
 private:
 	void Explode();

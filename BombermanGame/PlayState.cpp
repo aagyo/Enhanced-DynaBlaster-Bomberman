@@ -1,18 +1,24 @@
 #include "PlayState.h"
 #include "MenuState.h"
-
-// SCOATE DE AICI
-#include "IntroState.h"
+#include "LevelState.h"
+#include "GameOverState.h"
+#include "GameLostState.h"
+#include "Player.h"
 
 #include <iostream>
 #include <memory>
 #include <SFML/Graphics.hpp>
-#include "DestroyBlocks.h"
 
 PlayState::PlayState(StateMachine& machine, sf::RenderWindow& window, bool replace) :
 	State(machine, window, replace)
 {
 	CreateMap();
+
+	m_soundBuffer.loadFromFile("../_external/audio/play.flac");
+	m_sound.setBuffer(m_soundBuffer);
+	m_sound.play();
+	m_sound.setLoop(true);
+
 	std::cout << "PlayState Ctor" << std::endl;
 }
 
@@ -31,7 +37,8 @@ void PlayState::CheckForCollision()
 	{
 		EBlockType currentBlockType = m_map.GetBlock(blockIndex).GetBlockType();
 
-		if (currentBlockType != EBlockType::EmptyBlock && currentBlockType != EBlockType::PortalBlock && currentBlockType != EBlockType::PowerUpBlock)
+		if (currentBlockType != EBlockType::EmptyBlock && currentBlockType != EBlockType::PortalBlock && currentBlockType != EBlockType::PowerUpBlock
+			&& currentBlockType != EBlockType::FireBlock)
 		{
 			m_map.GetBlock(blockIndex).GetCollider().CheckCollision(*&m_player.GetCollider());
 		}
@@ -43,6 +50,56 @@ sf::Time PlayState::GetElapsedTime() const
 	return m_clock.GetElapsedTime();
 }
 
+void PlayState::DrawExplosion(Bomb* thisBomb, uint16_t thisIndex)
+{
+	if (thisBomb->GetExplosionShow() == false)
+	{
+		m_explosionsList[thisIndex]->Update(m_clock.GetElapsedTime().asSeconds(), m_window);
+		thisBomb->SetExplosionShow(true);
+	}
+	else
+	{
+		m_explosionsList[thisIndex]->Update(m_clock.GetElapsedTime().asSeconds(), m_window);
+		thisBomb->SetExplosionShow(m_explosionsList[thisIndex]->GetExplosionState());
+
+		if (thisBomb->GetExplosionShow() == false)
+		{
+			m_explosionsList.erase(m_explosionsList.begin());
+			m_map.m_bombsList.erase(m_map.m_bombsList.begin());
+			m_player.SetCanPlaceBomb(true);
+		}
+	}
+}
+
+void PlayState::CreateExplosions()
+{
+	if (!m_map.m_bombsList.empty() && m_explosionsList.size() != m_map.m_bombsList.size())
+	{
+		InsertExplosion(m_map.m_bombsList[m_map.m_bombsList.size() - 1]);
+	}
+	if (!m_map.m_bombsList.empty())
+	{
+		if (m_map.m_bombsList.front()->GetBombStatus() == true)
+			DrawExplosion(m_map.m_bombsList[0], 0);
+		if (m_map.m_bombsList.size() > 1)
+		{
+			for (uint16_t index = 1; index < m_map.m_bombsList.size(); index++)
+			{
+				m_map.EarlyExplode(m_map.m_bombsList[index]);
+				if (m_map.m_bombsList[index]->GetBombStatus() == true)
+				{
+					DrawExplosion(m_map.m_bombsList[index], index);
+				}
+			}
+		}
+	}
+}
+
+void PlayState::InsertExplosion(Bomb* thisBomb)
+{
+	m_explosionsList.push_back(new Explosion(thisBomb->GetBombShape().getPosition(), thisBomb->GetExplosionRadius(), &m_map));
+}
+
 bool PlayState::IsPlayerOnTeleport()
 {
 
@@ -51,9 +108,10 @@ bool PlayState::IsPlayerOnTeleport()
 
 	uint16_t IndexPlayer = playerPositionIndexLine * 17 + playerPositionIndexColumn;
 
-
 	if (m_map.GetBlock(IndexPlayer).GetBlockType() == EBlockType::PortalBlock)
+	{
 		return true;
+	}
 
 	return false;
 }
@@ -71,22 +129,22 @@ bool PlayState::IsPlayerOnPowerUp() {
 	if (m_map.GetBlock(indexPlayer).GetBlockType() == EBlockType::PowerUpBlock)
 	{
 		return true;
-
 	}
 
 	return false;
-
 }
 
 void PlayState::Pause()
 {
 	m_clock.Pause();
+	m_sound.pause();
 	std::cout << "PlayState Pause" << std::endl;
 }
 
 void PlayState::Resume()
 {
 	m_clock.Resume();
+	m_sound.play();
 	std::cout << "PlayState Resume" << std::endl;
 }
 
@@ -105,8 +163,8 @@ void PlayState::Update()
 
 			float new_width = window_height;
 			float new_height = window_width;
-			float offset_width = (window_width - new_width) / 2.0;
-			float offset_height = (window_height - new_height) / 2.0;
+			float offset_width = static_cast<float>(window_width - new_width) / 2.0;
+			float offset_height = static_cast<float>(window_height - new_height) / 2.0;
 
 			sf::View view = m_window.getDefaultView();
 
@@ -145,7 +203,8 @@ void PlayState::Update()
 			case sf::Keyboard::P:
 				m_next = StateMachine::Build<MenuState>(m_machine, m_window, false);
 				break;
-
+			case sf::Keyboard::Space:
+				m_map.GenerateBombs(m_player.GetPlayerShape().getPosition(), m_bombRadius, m_clock.GetElapsedTime().asSeconds(), m_player.GetMaxNoBombs());
 			default:
 				break;
 			}
@@ -164,51 +223,10 @@ void PlayState::Draw()
 	m_window.draw(m_map);
 	m_map.SetElapsedTime(m_clock.GetElapsedTime().asSeconds());
 
-	const uint16_t bombRadius = 2;
-
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) && m_player.GetCanPlaceBomb())
-	{
-		// MODIFICA AICI NU E BINE
-
-		m_bomb = new Bomb(m_map.GetBlock(static_cast<uint16_t>(round(m_player.GetPositionX() / 48))).GetPosition().x,
-			m_map.GetBlock(static_cast<uint16_t>(round(m_player.GetPositionY() / 48))).GetPosition().x,
-			bombRadius, m_clock.GetElapsedTime().asSeconds());
-		m_window.draw(m_bomb->GetBombShape());
+	if (m_map.GetNoBombsDisplayed() == m_player.GetMaxNoBombs())
 		m_player.SetCanPlaceBomb(false);
 
-	}
-	else if (m_player.GetCanPlaceBomb() == false)
-	{
-		if (!m_bomb->GetBombStatus() && m_bomb->GetExplosionRadius() != 0)
-		{
-			m_window.draw(m_bomb->GetBombShape());
-			m_bomb->Update(m_clock.GetElapsedTime().asSeconds());
-		}
-		else
-		{
-			if (m_bomb->GetExplosionShow() == false)
-			{
-				m_explosion = new Explosion(m_bomb->GetBombShape().getPosition(), m_bomb->GetExplosionRadius(), m_map);
-				m_explosion->Update(m_clock.GetElapsedTime().asSeconds(), m_window);
-				m_bomb->SetExplosionShow(true);
-			}
-			else
-			{
-				m_explosion->Update(m_clock.GetElapsedTime().asSeconds(), m_window);
-				m_bomb->SetExplosionShow(m_explosion->GetExplosionState());
-
-				if (m_bomb->GetExplosionShow() == false)
-				{
-					ChangeBlocks();
-					m_player.SetCanPlaceBomb(true);
-					//m_bomb.SetBombStatus(false);
-					delete m_explosion;
-					delete m_bomb;
-				}
-			}
-		}
-	}
-
+	CreateExplosions();
 
 	m_window.draw(m_player.GetPlayerShape());
 	m_player.MovePlayer(m_clock.GetElapsedTime().asSeconds());
@@ -219,104 +237,17 @@ void PlayState::Draw()
 		m_map.ClearBlock(m_player.GetPlayerShape().getPosition());
 		std::cout << "sters" << "\n";
 	}
-
-
 	// MODIFICA AICI
 
 	if (IsPlayerOnTeleport())
-		m_next = StateMachine::Build<IntroState>(m_machine, m_window, false);
+	{
+		m_next = StateMachine::Build<LevelState>(m_machine, m_window, false);
+	}
+
+	if (Player::GetNumberOfLives() == 0)
+	{
+		m_next = StateMachine::Build<GameLostState>(m_machine, m_window, false);
+	}
 
 	m_window.display();
 }
-
-
-void PlayState::ChangeBlocks()
-{
-	int playerPositionIndexColumn = (m_bomb->GetBombShape().getPosition().x + 24) / 48;
-	int playerPositionIndexLine = (m_bomb->GetBombShape().getPosition().y + 24) / 48;
-
-	uint16_t IndexPlayer = playerPositionIndexLine * 17 + playerPositionIndexColumn;
-
-	std::cout << IndexPlayer << " ";
-	// NORD
-	if (m_map.GetBlock(IndexPlayer + 1).GetBlockType() != EBlockType::WallBlock && m_map.GetBlock(IndexPlayer + 1).GetBlockType() != EBlockType::BorderBlock) {
-
-		if (m_map.GetBlock(IndexPlayer + 2).GetBlockType() == EBlockType::StoneBlock && m_map.GetBlock(IndexPlayer + 1).GetBlockType() == EBlockType::StoneBlock)
-		{
-			m_map.PowerUpOrEmpty(*&m_map.GetBlock(IndexPlayer + 2));
-			m_map.PowerUpOrEmpty(*&m_map.GetBlock(IndexPlayer + 1));
-
-		}
-		if (m_map.GetBlock(IndexPlayer + 2).GetBlockType() != EBlockType::StoneBlock && m_map.GetBlock(IndexPlayer + 1).GetBlockType() == EBlockType::StoneBlock)
-		{
-			m_map.PowerUpOrEmpty(*&m_map.GetBlock(IndexPlayer + 1));
-
-		}
-
-		if (m_map.GetBlock(IndexPlayer + 2).GetBlockType() == EBlockType::StoneBlock && m_map.GetBlock(IndexPlayer + 1).GetBlockType() == EBlockType::EmptyBlock)
-		{
-			m_map.PowerUpOrEmpty(*&m_map.GetBlock(IndexPlayer + 2));
-		}
-	}
-
-	if (m_map.GetBlock(IndexPlayer - 1).GetBlockType() != EBlockType::WallBlock && m_map.GetBlock(IndexPlayer - 1).GetBlockType() != EBlockType::BorderBlock) {
-
-		if (m_map.GetBlock(IndexPlayer - 2).GetBlockType() == EBlockType::StoneBlock && m_map.GetBlock(IndexPlayer - 1).GetBlockType() == EBlockType::StoneBlock)
-		{
-			m_map.PowerUpOrEmpty(*&m_map.GetBlock(IndexPlayer - 2));
-			m_map.PowerUpOrEmpty(*&m_map.GetBlock(IndexPlayer - 1));
-
-		}
-		if (m_map.GetBlock(IndexPlayer - 2).GetBlockType() != EBlockType::StoneBlock && m_map.GetBlock(IndexPlayer - 1).GetBlockType() == EBlockType::StoneBlock)
-		{
-			m_map.PowerUpOrEmpty(*&m_map.GetBlock(IndexPlayer - 1));
-
-		}
-
-		if (m_map.GetBlock(IndexPlayer - 2).GetBlockType() == EBlockType::StoneBlock && m_map.GetBlock(IndexPlayer - 1).GetBlockType() == EBlockType::EmptyBlock)
-		{
-			m_map.PowerUpOrEmpty(*&m_map.GetBlock(IndexPlayer - 2));
-		}
-	}
-
-	if (m_map.GetBlock(IndexPlayer - 17).GetBlockType() != EBlockType::WallBlock && m_map.GetBlock(IndexPlayer - 17).GetBlockType() != EBlockType::BorderBlock) {
-
-		if (m_map.GetBlock(IndexPlayer - 34).GetBlockType() == EBlockType::StoneBlock && m_map.GetBlock(IndexPlayer - 17).GetBlockType() == EBlockType::StoneBlock)
-		{
-			m_map.PowerUpOrEmpty(*&m_map.GetBlock(IndexPlayer - 34));
-			m_map.PowerUpOrEmpty(*&m_map.GetBlock(IndexPlayer - 17));
-
-		}
-		if (m_map.GetBlock(IndexPlayer - 34).GetBlockType() != EBlockType::StoneBlock && m_map.GetBlock(IndexPlayer - 17).GetBlockType() == EBlockType::StoneBlock)
-		{
-			m_map.PowerUpOrEmpty(*&m_map.GetBlock(IndexPlayer - 17));
-
-		}
-
-		if (m_map.GetBlock(IndexPlayer - 34).GetBlockType() == EBlockType::StoneBlock && m_map.GetBlock(IndexPlayer - 17).GetBlockType() == EBlockType::EmptyBlock)
-		{
-			m_map.PowerUpOrEmpty(*&m_map.GetBlock(IndexPlayer - 34));
-		}
-	}
-
-	if (m_map.GetBlock(IndexPlayer + 17).GetBlockType() != EBlockType::WallBlock && m_map.GetBlock(IndexPlayer + 17).GetBlockType() != EBlockType::BorderBlock) {
-
-		if (m_map.GetBlock(IndexPlayer + 34).GetBlockType() == EBlockType::StoneBlock && m_map.GetBlock(IndexPlayer + 17).GetBlockType() == EBlockType::StoneBlock)
-		{
-			m_map.PowerUpOrEmpty(*&m_map.GetBlock(IndexPlayer + 34));
-			m_map.PowerUpOrEmpty(*&m_map.GetBlock(IndexPlayer + 17));
-
-		}
-		if (m_map.GetBlock(IndexPlayer + 34).GetBlockType() != EBlockType::StoneBlock && m_map.GetBlock(IndexPlayer + 17).GetBlockType() == EBlockType::StoneBlock)
-		{
-			m_map.PowerUpOrEmpty(*&m_map.GetBlock(IndexPlayer + 17));
-
-		}
-
-		if (m_map.GetBlock(IndexPlayer + 34).GetBlockType() == EBlockType::StoneBlock && m_map.GetBlock(IndexPlayer + 17).GetBlockType() == EBlockType::EmptyBlock)
-		{
-			m_map.PowerUpOrEmpty(*&m_map.GetBlock(IndexPlayer + 34));
-		}
-	}
-}
-

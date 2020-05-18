@@ -1,5 +1,6 @@
 #include "MenuState.h"
 #include "IntroState.h"
+#include "LevelState.h"
 
 #include <iostream>
 #include <memory>
@@ -8,12 +9,13 @@
 MenuState::MenuState(StateMachine& machine, sf::RenderWindow& window, bool replace) :
 	State(machine, window, replace)
 {
-	m_bgTexture.loadFromFile("../_external/img/pause.png");
+	m_bgTexture.loadFromFile("../_external/states/menustate.png");
 	m_bg.setTexture(m_bgTexture, true);
 
-	m_alpha = sf::Color(0, 0, 0, 255);
-	m_fader.setFillColor(m_alpha);
-	m_fader.setSize(static_cast<sf::Vector2f>(m_bgTexture.getSize()));
+	m_soundBuffer.loadFromFile("../_external/audio/menu.flac");
+	m_sound.setBuffer(m_soundBuffer);
+	m_sound.play();
+	m_sound.setLoop(true);
 
 	std::cout << "MenuState Ctor" << std::endl;
 }
@@ -31,12 +33,6 @@ void MenuState::Draw()
 {
 	m_window.clear();
 	m_window.draw(m_bg);
-
-	if (m_alpha.a != 0)
-	{
-		m_window.draw(m_fader);
-	}
-
 	m_window.display();
 }
 void MenuState::Update()
@@ -95,6 +91,7 @@ void MenuState::Update()
 
 			case sf::Keyboard::I:
 				m_next = StateMachine::Build<IntroState>(m_machine, m_window, true);
+				LevelState::m_currentLevel = 0;
 				break;
 
 			default:
@@ -106,10 +103,4 @@ void MenuState::Update()
 			break;
 		}
 	}
-
-	if (m_alpha.a > 0)
-	{
-		m_alpha.a -= 2;
-	}
-	m_fader.setFillColor(m_alpha);
 }

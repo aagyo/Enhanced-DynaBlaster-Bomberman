@@ -1,5 +1,6 @@
 #include "IntroState.h"
-#include "PlayState.h"
+#include "LevelState.h"
+#include "StateMachine.h"
 
 #include <iostream>
 #include <memory>
@@ -8,26 +9,13 @@
 IntroState::IntroState(StateMachine& machine, sf::RenderWindow& window, bool replace)
 	: State(machine, window, replace)
 {
-	m_bgTexture.loadFromFile("../_external/img/bg.png");
+	m_bgTexture.loadFromFile("../_external/states/introstate.png");
 	m_bg.setTexture(m_bgTexture, true);
 
-	if (!m_font.loadFromFile("../_external/font/bm.ttf"))
-	{
-		// handle error
-	}
-
-	m_menu[0].setFont(m_font);
-	m_menu[0].setFillColor(sf::Color::White);
-	m_menu[0].setString("Press ENTER for New Game...");
-	m_menu[0].setPosition(sf::Vector2f(window.getPosition().x - 500, window.getPosition().y - 60));
-	m_menu[0].setScale(0.8, 0.8);
-
-	m_menu[1].setFont(m_font);
-	m_menu[1].setFillColor(sf::Color::White);
-	m_menu[1].setString("or ESC to Exit!");
-	m_menu[1].setPosition(sf::Vector2f(window.getPosition().x - 500, window.getPosition().y - 35));
-	m_selectedItemIndex = 0;
-	m_menu[1].setScale(0.6, 0.6);
+	m_soundBuffer.loadFromFile("../_external/audio/intro.flac");
+	m_sound.setBuffer(m_soundBuffer);
+	m_sound.play();
+	m_sound.setLoop(true);
 
 	std::cout << "IntroState Ctor" << std::endl;
 }
@@ -38,7 +26,6 @@ void IntroState::Update()
 
 	while (m_window.pollEvent(event))
 	{
-
 		if (event.type == sf::Event::Resized)
 		{
 			auto window_width = event.size.width;
@@ -84,7 +71,7 @@ void IntroState::Update()
 			switch (event.key.code)
 			{
 			case sf::Keyboard::Enter:
-				m_next = StateMachine::Build<PlayState>(m_machine, m_window, true);
+				m_next = StateMachine::Build<LevelState>(m_machine, m_window, true);
 				break;
 
 			case sf::Keyboard::Escape:
@@ -117,11 +104,5 @@ void IntroState::Draw()
 {
 	m_window.clear();
 	m_window.draw(m_bg);
-
-	for (int i = 0; i < 2; i++)
-	{
-		m_window.draw(m_menu[i]);
-	}
-
 	m_window.display();
 }

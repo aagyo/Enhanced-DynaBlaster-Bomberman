@@ -2,6 +2,8 @@
 #include "Bomb.h"
 #include <iostream>
 
+uint16_t Player::m_numberOfLives;
+
 Player::Player() : m_playerShape(sf::Vector2f(m_playerHeight, m_playerWidth))
 {
 	SetStartPosition();
@@ -19,6 +21,8 @@ Player::Player() : m_playerShape(sf::Vector2f(m_playerHeight, m_playerWidth))
 	m_animationComponents.animation = Animation(m_direction.stayDirection, 3);
 
 	m_playerShape.setSize(sf::Vector2f(43.f, 43.f));
+	
+	SetNumberOfLives(3);
 }
 
 void Player::SetStartPosition()
@@ -56,9 +60,19 @@ bool Player::GetCanPlaceBomb() const
 	return m_placeBomb;
 }
 
+uint16_t Player::GetMaxNoBombs() const
+{
+	return m_maximumNoBombs;
+}
+
 sf::RectangleShape Player::GetPlayerShape() const
 {
 	return m_playerShape;
+}
+
+void Player::SetMaxNoBombs(uint16_t newMaximum)
+{
+	m_maximumNoBombs = newMaximum;
 }
 
 void Player::SetPositionX(float newPositionX)
@@ -76,9 +90,19 @@ void Player::SetCanPlaceBomb(bool isPossible)
 	m_placeBomb = isPossible;
 }
 
+void Player::SetNumberOfLives(uint16_t life)
+{
+	m_numberOfLives = life;
+}
+
 Collider Player::GetCollider()
 {
 	return Collider(m_playerShape);
+}
+
+uint16_t Player::GetNumberOfLives()
+{
+	return m_numberOfLives;
 }
 
 void Player::MovePlayer(float deltaTime)

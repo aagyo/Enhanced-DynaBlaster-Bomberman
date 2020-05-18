@@ -13,7 +13,7 @@ public:
 	~Explosion() = default;
 
 public:
-	Explosion(const sf::Vector2f& bombPosition, const uint16_t& radius, Map& m_map);
+	Explosion(const sf::Vector2f& bombPosition, const uint16_t& radius, Map* m_map);
 	void Update(float deltaTime, sf::RenderWindow& window);
 
 public:
@@ -49,13 +49,15 @@ private:
 	}m_direction;
 
 private:
-	Map m_map;
-	uint16_t m_currentState = 0;
+	Map* m_map;
+	uint16_t m_currentState = 5;
 	uint16_t m_numberOfFrames = 4;
 	std::array<int, 4> m_posFrequency;
 	sf::Vector2f m_center;
 	uint16_t m_radius;
+	std::vector<sf::Vector2f> m_emptyBlocksLocation;
 	bool m_explosionNotFinished = true;
+	bool m_fireBlockMark = false;
 	sf::RectangleShape m_explosionShape;
 	sf::Texture m_explosionTexture;
 

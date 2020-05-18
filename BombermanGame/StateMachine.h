@@ -1,8 +1,8 @@
 #pragma once
 #include "State.h"
 
-#include <stack>
 #include <SFML/Graphics.hpp>
+#include <stack>
 
 class StateMachine
 {
@@ -18,9 +18,11 @@ public:
 	void Draw();
 	bool Running() const;
 	void Quit();
+
 public:
 	template <typename T>
 	static std::unique_ptr<T> Build(StateMachine& machine, sf::RenderWindow& window, bool replace = true);
+
 private:
 	std::stack<std::unique_ptr<State>> m_states;
 	bool m_resumeState;

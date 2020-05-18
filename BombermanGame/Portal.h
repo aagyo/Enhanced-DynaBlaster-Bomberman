@@ -25,7 +25,7 @@ private:
 	sf::RectangleShape m_portalBlock;
 
 	// modify here to see portal
-	bool m_isVisible = true;
+	bool m_isVisible = false;
 
 	struct AnimationInfo
 	{

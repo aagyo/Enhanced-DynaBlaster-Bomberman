@@ -25,7 +25,7 @@ public:
 private:
 	sf::IntRect m_firstFrame;
 	sf::IntRect m_frame;
-	uint16_t m_currentExplosionFrame = -1;
+	int m_currentExplosionFrame = -1;
 	uint16_t m_currentFrame = 0;
 	uint16_t m_numberOfFrames;
 	float m_timeOfLastUpdate = 0;
