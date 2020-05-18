@@ -24,10 +24,9 @@ public:
 	void SetBlockType(const EBlockType& blockType);
 	void SetPosition(const sf::Vector2f& coordinates);
 	void SetBlockTexture(sf::Texture* texture, sf::IntRect);
-	void SetBlock(sf::Texture texture);
 
 private:
 	sf::RectangleShape m_blockBody;
 	EBlockType m_blockType;
-	sf::Texture m_blockTexture;
+	const sf::Texture m_blockTexture;
 };

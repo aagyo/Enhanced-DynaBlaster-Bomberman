@@ -1,22 +1,20 @@
 #include "Bomb.h"
 #include "Animation.h"
 
-Bomb::Bomb(const float playerXPosition, const float playerYPosition, uint16_t& radius, const float trigger) :
-	m_bombShape(sf::Vector2f(48, 48))
+Bomb::Bomb(const float playerPosX, const float playerPosY, const uint16_t radius, const float trigger) :
+	m_bombShape(sf::Vector2f(48, 48)), m_radius(radius)
 {
-	m_bombShape.setPosition(playerXPosition, playerYPosition);
-	m_bombTexture.loadFromFile("../_external/sprites/mybomb47.png");
+	m_bombShape.setPosition(playerPosX, playerPosY);
+	m_bombTexture.loadFromFile("../_external/sprites/bomb.png");
 	m_bombTexture.setSmooth(true);
 	m_bombShape.setTexture(&m_bombTexture);
-	if (radius > 5)
-		radius = 5;
-	m_radius = radius;
+
 	m_animation.anim = Animation(sf::IntRect(0, 0, 48, 48), 5);
 	m_animation.frameDuration = m_tickingTime / m_animation.anim.GetNumberOfFrames();
 	m_bombShape.setTextureRect(m_animation.anim.GetFrame());
+
 	m_triggeredTime = trigger;
 }
-
 
 void Bomb::Update(float elapsedTime)
 {
@@ -42,11 +40,6 @@ const sf::RectangleShape& Bomb::GetBombShape() const
 bool Bomb::GetBombStatus() const
 {
 	return m_bombExploded;
-}
-
-void Bomb::SetBombStatus(const bool& newStatus)
-{
-	m_bombExploded = newStatus;
 }
 
 void Bomb::operator=(const Bomb& other)

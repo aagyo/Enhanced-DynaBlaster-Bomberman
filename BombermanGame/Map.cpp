@@ -7,9 +7,9 @@ void Map::CreateTilesOnMap(const sf::Vector2u& tileSize)
 
 	GenerateMapLayout();
 
-	m_tileset.loadFromFile("../_external/sprites/sprites2.png");
+	m_tileTexture.loadFromFile("../_external/sprites/sprites2.png");
 
-	m_tileset.setSmooth(true);
+	m_tileTexture.setSmooth(true);
 
 	for (uint16_t heightIndex = 0; heightIndex < m_mapHeight; heightIndex++)
 	{
@@ -18,12 +18,12 @@ void Map::CreateTilesOnMap(const sf::Vector2u& tileSize)
 
 			uint16_t tileNumberIndex = static_cast<uint16_t>(m_map[tileNumber]);
 
-			uint16_t textureLineIndex = tileNumberIndex % (m_tileset.getSize().x / tileSize.x);
-			uint16_t textureColumnIndex = tileNumberIndex / (m_tileset.getSize().x / tileSize.x);
+			uint16_t textureLineIndex = tileNumberIndex % (m_tileTexture.getSize().x / tileSize.x);
+			uint16_t textureColumnIndex = tileNumberIndex / (m_tileTexture.getSize().x / tileSize.x);
 
-			m_blocks[tileNumber].SetPosition(sf::Vector2f( widthIndex * tileSize.x, heightIndex * tileSize.y));
+			m_blocks[tileNumber].SetPosition(sf::Vector2f(widthIndex * tileSize.y, heightIndex * tileSize.x));
 			m_blocks[tileNumber].SetBlockType(m_map[tileNumber]);
-			m_blocks[tileNumber].SetBlockTexture(&m_tileset, sf::IntRect(textureLineIndex * tileSize.x, textureColumnIndex * tileSize.y, tileSize.x, tileSize.y));
+			m_blocks[tileNumber].SetBlockTexture(&m_tileTexture, sf::IntRect(textureLineIndex * tileSize.x, textureColumnIndex * tileSize.y, tileSize.x, tileSize.y));
 
 			tileNumber++;
 		}
@@ -33,6 +33,16 @@ void Map::CreateTilesOnMap(const sf::Vector2u& tileSize)
 Block Map::GetBlock(uint16_t position) const
 {
 	return m_blocks[position];
+}
+
+std::array<EBlockType, 289> Map::GetMap() const
+{
+	return m_map;
+}
+
+std::array<Block, 289> Map::GetBlocks() const
+{
+	return m_blocks;
 }
 
 const uint16_t Map::GetWidth()
@@ -65,26 +75,26 @@ void Map::GenerateMapLayout()
 			if (lineIndex == 0 || lineIndex == m_mapHeight - 1 || columnIndex == 0 || columnIndex == m_mapHeight - 1)
 			{
 				m_map[indexBlockOnMap] = EBlockType::BorderBlock;
-				std::cout << "3 ";
+				//std::cout << "3 ";
 			}
 
 			else if (lineIndex % 2 == 0 && columnIndex % 2 == 0)
 			{
 				m_map[indexBlockOnMap] = EBlockType::WallBlock;
-				std::cout << "2 ";
+				//std::cout << "2 ";
 			}
 
 			else
 			{
 				if (GenerateDestroyableBlock())
 				{
-					std::cout << "1 ";
 					m_map[indexBlockOnMap] = EBlockType::StoneBlock;
+					//std::cout << "1 ";
 				}
 				else
 				{
-					std::cout << "0 ";
 					m_map[indexBlockOnMap] = EBlockType::EmptyBlock;
+					//std::cout << "0 ";
 				}
 			}
 
@@ -96,15 +106,14 @@ void Map::GenerateMapLayout()
 	m_map[19] = EBlockType::EmptyBlock;
 	m_map[35] = EBlockType::EmptyBlock;
 
-	std::cout << "\n";
-
+	//std::cout << "\n";
 }
 
 void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	states.transform *= getTransform();
 
-	states.texture = &m_tileset;
+	states.texture = &m_tileTexture;
 
 	for (const Block& block : m_blocks)
 	{

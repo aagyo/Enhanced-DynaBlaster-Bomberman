@@ -1,10 +1,7 @@
-#include <iostream>
-#include "Window.h"
+#include "Application.h"
 
 int main()
 {
-	std::cout << "Game in progress :) \n";
-	Window gameWindow;
-	gameWindow.ShowWindow();
-	return 0;
+	Application bombermanGameApp;
+	bombermanGameApp.Run();
 }
