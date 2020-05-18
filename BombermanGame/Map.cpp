@@ -2,7 +2,6 @@
 #include "PlayState.h"
 #include <random>
 
-// STERGE DE AICI
 #include <iostream>
 
 void Map::CreateTilesOnMap(const sf::Vector2u& tileSize)
@@ -32,7 +31,7 @@ void Map::CreateTilesOnMap(const sf::Vector2u& tileSize)
 		}
 	}
 
-	GenerateRandomTeleport();
+	GenerateRandomEnemy();
 
 }
 
@@ -97,10 +96,15 @@ void Map::GenerateRandomTeleport() {
 			if (m_map[randomIndex] == EBlockType::StoneBlock) {
 
 				m_blocks[randomIndex].SetIsPortal(true);
-
+				m_portalGenerated = true;
 			}
 		}
 	}
+}
+
+bool Map::IsPortalGenerate()
+{
+	return m_portalGenerated;
 }
 
 void Map::IsPortal(Block& block) {
@@ -114,6 +118,55 @@ void Map::GenerateRandomPowerUp(const sf::Vector2f& position)
 {
 	m_powerUp = new PowerUp(sf::Vector2f(position));
 	m_powerUp->CreateRandomPowerUp();
+}
+void Map::PlaceEnemies(const uint8_t randomIndex)
+{
+	m_enemiesList[m_currentEnemy]->SetPosition(m_blocks[randomIndex].GetPosition());
+	m_currentEnemy++;
+}
+
+void Map::CreateEnemies()
+{
+	for (uint8_t currentLevel = 0; currentLevel <= LevelState::m_currentLevel; currentLevel++)
+		m_enemiesList.push_back(new Enemy());
+}
+
+void Map::CreateBombsCollision(sf::Vector2f playerPosition)
+{
+	if (CheckBombsPositions(playerPosition) == true)
+	{
+		uint16_t bombIndexColumn = (m_bombsList.back()->GetBombShape().getPosition().x + 24) / 48;
+		uint16_t bombIndexLine = (m_bombsList.back()->GetBombShape().getPosition().y + 24) / 48;
+		uint16_t bombIndex = bombIndexLine * 17 + bombIndexColumn;
+
+		uint16_t playerIndexColumn = (playerPosition.x + 24) / 48;
+		uint16_t playerIndexLine = (playerPosition.y + 24) / 48;
+		uint16_t playerIndex = playerIndexLine * 17 + playerIndexColumn;
+
+		if (bombIndex > playerIndex || bombIndex < playerIndex)
+		{
+			m_blocks[bombIndex].SetBlockType(EBlockType::BombBlock);
+		}
+	}
+		
+}
+
+void Map::GenerateRandomEnemy() {
+
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<> dis(0, m_blocks.size() - 1);
+	uint16_t randomIndex = 0;
+	CreateEnemies();
+	while (m_blocks[randomIndex].GetIsPortal() != true)
+	{
+		randomIndex = dis(gen);
+
+		if (m_blocks[randomIndex].GetBlockType() == EBlockType::EmptyBlock) {
+			PlaceEnemies(randomIndex);
+			break;
+		}
+	}
 }
 
 bool Map::CheckBombsPositions(sf::Vector2f playerPosition)
@@ -157,6 +210,133 @@ void Map::ClearFireBlocks()
 	{
 		m_blocks[fireBlock].SetBlockType(EBlockType::EmptyBlock);
 	}
+}
+
+void Map::MoveEnemy()
+{
+	for (auto& enemy : m_enemiesList)
+	{
+		if (enemy != nullptr) {
+
+			uint16_t enemyIndexColumn = (enemy->GetShape().getPosition().x + 24) / 48;
+			uint16_t enemyIndexLine = (enemy->GetShape().getPosition().y + 24) / 48;
+
+			uint16_t index = enemyIndexLine * 17 + enemyIndexColumn;
+
+			if (m_elapsedTime - enemy->GetLastTimeMoving() >= 0.8f)
+			{
+				if (enemy->GetDirection() == Direction::DOWN && enemy->GetWallHitted() == false)
+					if (m_blocks[index + 17].GetBlockType() == EBlockType::EmptyBlock)
+					{
+						enemy->SetPosition(m_blocks[index + 17].GetPosition());
+						enemy->SetLastTimeMoving(m_elapsedTime);
+						enemy->SetLastDirection(enemy->GetDirection());
+					}
+					else
+					{
+						enemy->SetWallHitted(true);
+					}
+
+				if (enemy->GetDirection() == Direction::UP && enemy->GetWallHitted() == false)
+					if (m_blocks[index - 17].GetBlockType() == EBlockType::EmptyBlock)
+					{
+						enemy->SetPosition(m_blocks[index - 17].GetPosition());
+						enemy->SetLastTimeMoving(m_elapsedTime);
+						enemy->SetLastDirection(enemy->GetDirection());
+					}
+					else
+					{
+						enemy->SetWallHitted(true);
+					}
+
+				if (enemy->GetDirection() == Direction::LEFT && enemy->GetWallHitted() == false)
+					if (m_blocks[index - 1].GetBlockType() == EBlockType::EmptyBlock)
+					{
+						enemy->SetPosition(m_blocks[index - 1].GetPosition());
+						enemy->SetLastTimeMoving(m_elapsedTime);
+						enemy->SetLastDirection(enemy->GetDirection());
+					}
+					else
+					{
+						enemy->SetWallHitted(true);
+					}
+
+				if (enemy->GetDirection() == Direction::RIGHT && enemy->GetWallHitted() == false)
+					if (m_blocks[index + 1].GetBlockType() == EBlockType::EmptyBlock)
+					{
+						enemy->SetPosition(m_blocks[index + 1].GetPosition());
+						enemy->SetLastTimeMoving(m_elapsedTime);
+						enemy->SetLastDirection(enemy->GetDirection());
+					}
+					else
+					{
+						enemy->SetWallHitted(true);
+					}
+
+				if (enemy->GetWallHitted() == true)
+				{
+					std::random_device rd;
+					std::mt19937 gen(rd());
+					std::uniform_int_distribution<> dis(0, 3);
+
+					uint16_t randomIndex = 0;
+					randomIndex = dis(gen);
+
+					while (enemy->GetLastDirection() != static_cast<Direction>(randomIndex))
+					{
+						enemy->SetDirection(static_cast<Direction>(randomIndex));
+						randomIndex = dis(gen);
+
+					}
+					enemy->SetWallHitted(false);
+				}
+
+			}
+
+		}
+	}
+
+}
+
+bool Map::IsEnemyDead(const Enemy* enemy)
+{
+	if (enemy != nullptr) {
+
+		uint16_t enemyIndexColumn = (enemy->GetPositionX() + 24) / 48;
+		uint16_t enemyIndexLine = (enemy->GetPositionY() + 24) / 48;
+		uint16_t index = enemyIndexLine * 17 + enemyIndexColumn;
+
+		if (m_blocks[index].GetBlockType() == EBlockType::FireBlock)
+		{
+			std::vector<Enemy*>::iterator enemyIt = std::find(m_enemiesList.begin(), m_enemiesList.end(), enemy);
+			enemy = nullptr;
+			m_enemiesList.erase(enemyIt);
+			m_numberOfMonsters--;
+			return true;
+		}
+	}
+	return false;
+}
+
+uint16_t Map::GetNumberOfMonsters()
+{
+	return m_numberOfMonsters;
+}
+
+void Map::DetonateAllBombs()
+{
+	for (auto& bomb : m_bombsList)
+		bomb->SetBombStatus(true);
+}
+
+void Map::SetDetonator(bool state)
+{
+	m_detonator = true;
+}
+
+bool Map::GetDetonator() const
+{
+	return m_detonator;
 }
 
 void Map::GenerateMapLayout()
@@ -207,6 +387,11 @@ PowerUp* Map::GetPower()
 	return m_powerUp;
 }
 
+std::vector<Enemy*> Map::GetEnemy() const
+{
+	return m_enemiesList;
+}
+
 void Map::ExplosionMarker(const sf::Vector2f& position)
 {
 	std::random_device rd;
@@ -234,7 +419,10 @@ void Map::ExplosionMarker(const sf::Vector2f& position)
 		fireBlocks.push_back(index);
 	}
 	else if (m_blocks[index].GetBlockType() == EBlockType::PowerUpBlock)
+	{
 		RemovePowerUp();
+		ClearBlock(m_blocks[index].GetPosition());
+	}
 	else if (m_blocks[index].GetBlockType() == EBlockType::StoneBlock && m_blocks[index].GetIsPortal() != true)
 		ClearBlock(position);
 	else if (m_blocks[index].GetBlockType() == EBlockType::StoneBlock && m_blocks[index].GetIsPortal() == true)
@@ -288,6 +476,19 @@ void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
 	if (m_powerUp != nullptr)
 	{
 		target.draw(m_powerUp->GetShape());
+	}
+
+	for (auto& enemy : m_enemiesList)
+	{
+		if (enemy != nullptr)
+		{
+			target.draw(enemy->GetShape());
+			enemy->UpdateAnimation(m_elapsedTime);
+			target.draw(enemy->GetShape());
+			enemy->UpdateAnimation(m_elapsedTime);
+			target.draw(enemy->GetShape());
+			enemy->UpdateAnimation(m_elapsedTime);
+		}
 	}
 
 }

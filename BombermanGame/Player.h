@@ -50,7 +50,7 @@ public:
 	uint16_t GetMaxNoBombs() const;
 	bool GetIsDead();
 	
-	void DeadAnimation(float deltaTime);
+	void DeadAnimation(const float& deltaTime);
 
 private:
 	const float m_startPositionCoord = 48.f;

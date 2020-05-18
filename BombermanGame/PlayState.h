@@ -32,6 +32,7 @@ private:
 	bool IsPlayerOnPowerUp();
 	bool IsTimeZero();
 	void IsPlayerOnFireBlock();
+	bool IsPlayerOnEnemy();
 	
 
 public:
@@ -41,6 +42,8 @@ private:
 	void CreateExplosions();
 	void DrawExplosion(Bomb* thisBomb, uint16_t thisIndex);
 	void InsertExplosion(Bomb *thisBomb);
+
+	void VerifyEnemyDead(const Enemy* enemy);
 
 private:
 	void DeleteMusicBuffer();

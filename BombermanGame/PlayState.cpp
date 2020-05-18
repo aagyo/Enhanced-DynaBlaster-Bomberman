@@ -94,7 +94,7 @@ void PlayState::StatusUpdate(const PowerType& powerUp)
 		break;
 
 	case PowerType::Skate:
-		m_player.SetPlayerSpeed(3.0f);
+		m_player.SetPlayerSpeed(1.8f);
 		break;
 
 	case PowerType::GoldSkate:
@@ -108,6 +108,10 @@ void PlayState::StatusUpdate(const PowerType& powerUp)
 	case PowerType::LifeUp:
 		m_player.SetLife(1);
 		m_bar->SetLifeText(m_player.GetNumberOfLives());
+		break;
+
+	case PowerType::Detonator:
+		m_map.SetDetonator(true);
 		break;
 
 	default:
@@ -135,6 +139,7 @@ void PlayState::DrawExplosion(Bomb* thisBomb, uint16_t thisIndex)
 		if (thisBomb->GetExplosionShow() == false)
 		{
 			m_explosionsList.erase(m_explosionsList.begin());
+			m_map.ClearBlock(m_map.m_bombsList.front()->GetBombShape().getPosition());
 			m_map.m_bombsList.erase(m_map.m_bombsList.begin());
 			m_map.ClearFireBlocks();
 			m_player.SetCanPlaceBomb(true);
@@ -169,6 +174,12 @@ void PlayState::CreateExplosions()
 void PlayState::InsertExplosion(Bomb* thisBomb)
 {
 	m_explosionsList.push_back(new Explosion(thisBomb->GetBombShape().getPosition(), thisBomb->GetExplosionRadius(), &m_map));
+}
+
+void PlayState::VerifyEnemyDead(const Enemy* enemy)
+{
+	if (enemy != nullptr && m_map.IsEnemyDead(enemy) == true)
+		m_bar->SetScoreText(1000);
 }
 
 bool PlayState::IsPlayerOnTeleport()
@@ -223,6 +234,31 @@ void PlayState::IsPlayerOnFireBlock()
 	{
 		m_wasPlayerOnFire = true;
 	}
+}
+
+bool PlayState::IsPlayerOnEnemy()
+{
+	bool isOnEnemy = false;
+	for (auto& enemy : m_map.GetEnemy())
+	{
+		if (enemy != nullptr) {
+			int playerPositionIndexColumn = (m_player.GetPositionX() + 24) / 48;
+			int playerPositionIndexLine = (m_player.GetPositionY() + 24) / 48;
+
+			uint16_t indexPlayer = playerPositionIndexLine * 17 + playerPositionIndexColumn;
+
+			int enemyPositionIndexColumn = (enemy->GetShape().getPosition().x + 24) / 48;
+			int enemyPositionIndexLine = (enemy->GetShape().getPosition().y + 24) / 48;
+
+			uint16_t indexEnemy = enemyPositionIndexLine * 17 + enemyPositionIndexColumn;
+
+			if (indexPlayer == indexEnemy)
+			{
+				isOnEnemy = true;
+			}
+		}
+	}
+	return isOnEnemy;
 }
 
 void PlayState::Pause()
@@ -311,6 +347,13 @@ void PlayState::Update()
 				break;
 			case sf::Keyboard::Space:
 				m_map.GenerateBombs(m_player.GetPlayerShape().getPosition(), m_player.GetRadiusStatus(), m_clock.GetElapsedTime().asSeconds(), m_player.GetMaxNoBombs());
+				break;
+			case sf::Keyboard::K:
+				if (m_map.GetDetonator() == true)
+				{
+					m_map.DetonateAllBombs();
+				}
+				break;
 			default:
 				break;
 			}
@@ -333,7 +376,8 @@ void PlayState::Draw()
 	m_bar->SetElapsedTime(elapsedTime);
 	m_bar->CalculateAndCheck();
 
-	m_bar->SetScoreText(1);
+	if (m_map.IsPortalGenerate() == false)
+		m_map.GenerateRandomTeleport();
 
 	if (m_map.GetNoBombsDisplayed() == m_player.GetMaxNoBombs())
 		m_player.SetCanPlaceBomb(false);
@@ -341,9 +385,9 @@ void PlayState::Draw()
 	CreateExplosions();
 
 	IsPlayerOnFireBlock();
-	if (IsTimeZero() || m_wasPlayerOnFire == true)
+	if (IsTimeZero() || m_wasPlayerOnFire == true || IsPlayerOnEnemy() == true)
 	{
-		m_player.DeadAnimation(m_clock.GetElapsedTime().asSeconds());
+		m_player.DeadAnimation(elapsedTime);
 		m_window.draw(m_player.GetPlayerShape());
 		if (m_player.GetIsDead() == true)
 		{
@@ -355,6 +399,13 @@ void PlayState::Draw()
 	{
 		m_window.draw(m_player.GetPlayerShape());
 		m_player.MovePlayer(elapsedTime);
+		if(!m_map.m_bombsList.empty())
+			m_map.CreateBombsCollision(m_player.GetPlayerShape().getPosition());
+		m_map.MoveEnemy();
+		for (auto& enemy : m_map.GetEnemy())
+		{
+			VerifyEnemyDead(enemy);
+		}
 		CheckForCollision();
 	}
 
@@ -364,12 +415,10 @@ void PlayState::Draw()
 		m_map.ClearBlock(m_player.GetPlayerShape().getPosition());
 		std::cout << "sters" << "\n";
 	}
-	 //MODIFICA AICI
 
 	if (IsPlayerOnTeleport())
 	{
 		m_next = StateMachine::Build<LevelState>(m_machine, m_window, false);
-		
 	}
 
 	if (m_player.GetNumberOfLives() == 0)

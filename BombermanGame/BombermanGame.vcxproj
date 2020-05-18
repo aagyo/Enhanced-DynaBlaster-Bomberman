@@ -147,11 +147,13 @@
     <ClInclude Include="Bomb.h" />
     <ClInclude Include="Chronometer.h" />
     <ClInclude Include="Collider.h" />
+    <ClInclude Include="Enemy.h" />
     <ClInclude Include="Explosion.h" />
     <ClInclude Include="GameBar.h" />
     <ClInclude Include="GameClock.h" />
     <ClInclude Include="GameLostState.h" />
     <ClInclude Include="GameOverState.h" />
+    <ClInclude Include="EnemyDirection.h" />
     <ClInclude Include="IntroState.h" />
     <ClInclude Include="LevelState.h" />
     <ClInclude Include="Map.h" />
@@ -171,6 +173,7 @@
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="Collider.cpp" />
+    <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Explosion.cpp" />
     <ClCompile Include="GameBar.cpp" />
     <ClCompile Include="GameClock.cpp" />

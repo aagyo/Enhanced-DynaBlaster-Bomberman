@@ -135,6 +135,12 @@
     <ClInclude Include="GameBar.h">
       <Filter>Header Files\GameComponents</Filter>
     </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>Header Files\GameComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyDirection.h">
+      <Filter>Header Files\GameComponents</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp">
@@ -204,6 +210,9 @@
       <Filter>Source Files\GUIEngine</Filter>
     </ClCompile>
     <ClCompile Include="GameBar.cpp">
+      <Filter>Source Files\GameComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
       <Filter>Source Files\GameComponents</Filter>
     </ClCompile>
   </ItemGroup>

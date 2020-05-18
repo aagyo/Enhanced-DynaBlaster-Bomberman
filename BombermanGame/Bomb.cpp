@@ -1,7 +1,7 @@
 #include "Bomb.h"
 #include "Animation.h"
 
-Bomb::Bomb(const float playerXPosition, const float playerYPosition, const uint16_t& radius, const float trigger) :
+Bomb::Bomb(const float& playerXPosition, const float& playerYPosition, const uint16_t& radius, const float& trigger) :
 	m_bombShape(sf::Vector2f(48, 48)), m_radius(radius)
 {
 	m_bombShape.setPosition(playerXPosition, playerYPosition);
@@ -16,7 +16,7 @@ Bomb::Bomb(const float playerXPosition, const float playerYPosition, const uint1
 }
 
 
-void Bomb::Update(float elapsedTime)
+void Bomb::Update(const float& elapsedTime)
 {
 	m_animation.anim.Update(elapsedTime, m_animation.frameDuration);
 	m_bombShape.setTextureRect(m_animation.anim.GetFrame());
@@ -47,12 +47,12 @@ bool Bomb::GetExplosionShow() const
 	return m_explosionShowed;
 }
 
-void Bomb::SetExplosionShow(bool explosionFlag)
+void Bomb::SetExplosionShow(const bool& explosionFlag)
 {
 	m_explosionShowed = explosionFlag;
 }
 
-void Bomb::SetBombStatus(bool status)
+void Bomb::SetBombStatus(const bool& status)
 {
 	m_bombExploded = status;
 }

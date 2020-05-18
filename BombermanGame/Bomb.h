@@ -12,18 +12,18 @@ public:
 	Bomb& operator=(Bomb&& other) noexcept = default;
 
 public:
-	Bomb(const float playerXPosition, const float playerYPosition, const uint16_t& radius, const float trigger);
+	Bomb(const float& playerXPosition, const float& playerYPosition, const uint16_t& radius, const float& trigger);
 
 public:
 	uint16_t GetExplosionRadius() const;
 	const sf::RectangleShape& GetBombShape() const;
 	bool GetBombStatus() const;
 	bool GetExplosionShow() const;
-	void SetExplosionShow(bool explosionFlag);
-	void SetBombStatus(bool status);
+	void SetExplosionShow(const bool& explosionFlag);
+	void SetBombStatus(const bool& status);
 
 public:
-	void Update(float elapsedTime);
+	void Update(const float& elapsedTime);
 
 private:
 	void Explode();

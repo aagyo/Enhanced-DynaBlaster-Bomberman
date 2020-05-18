@@ -9,4 +9,5 @@ enum class EBlockType {
 	PortalBlock,
 	PowerUpBlock,
 	FireBlock,
+	BombBlock
 };

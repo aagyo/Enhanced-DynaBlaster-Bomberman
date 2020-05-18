@@ -1,7 +1,7 @@
 #include "GameBar.h"
 #include <string> 
 #include <iostream>
-GameBar::GameBar() : m_timeFinished(false), m_numberOfSecound(30), elapsedTime(0), m_highScore(0)
+GameBar::GameBar() : m_timeFinished(false), m_numberOfSecound(180), elapsedTime(0), m_highScore(0)
 {
 
 	m_barTexture.loadFromFile("../_external/sprites/bar.png");

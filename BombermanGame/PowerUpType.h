@@ -8,10 +8,9 @@ enum class PowerType {
 	Fire,			// +1 to the bomb radius
 	BombUp,				// +1 player bombs
 	Skate,				// ++ player speed
+	Detonator,          // detonates all bombs
 	LifeUp,				// +1 player life
 	Clock,				// + aditional time to finish the level
-	RemoteControl,		// destroy bomb when a button is pressed
-	LineBomb,			// all bomb in line
 	BlockPasser,		// allow player to walk on stones block
 	Count
 };

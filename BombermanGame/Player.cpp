@@ -116,13 +116,12 @@ bool Player::GetIsDead()
 	return m_isDead;
 }
 
-void Player::DeadAnimation(float deltaTime)
+void Player::DeadAnimation(const float& deltaTime)
 {
 	if(m_deadAnimation == false)
 		SetDeadAnimation();
 	if (m_isDead == false) {
 		m_animationComponents.animation.Update(deltaTime, m_animationComponents.frameDuration);
-		m_playerShape.setTextureRect(m_animationComponents.animation.GetFrame());
 		if (m_animationComponents.animation.GetCurrentFrame() == 0)
 			m_isDead = true;
 		m_animationComponents.frameDuration = 3.0f / m_animationComponents.animation.GetNumberOfFrames();
