@@ -1,6 +1,6 @@
 #include "Block.h"
 
-Block::Block() : m_blockType(EBlockType::EmptyBlock), m_blockBody(sf::Vector2f(48.f, 48.f))
+Block::Block() : m_blockType(EBlockType::EmptyBlock), m_blockBody(sf::Vector2f(48.f, 48.f)), isPortal(false)
 {
 	// empty
 }
@@ -39,4 +39,9 @@ void Block::SetBlockTexture(sf::Texture* texture, sf::IntRect blockTexture)
 {
 	m_blockBody.setTexture(texture);
 	m_blockBody.setTextureRect(blockTexture);
+}
+
+void Block::SetIsPortal(bool state)
+{
+	isPortal = state;
 }

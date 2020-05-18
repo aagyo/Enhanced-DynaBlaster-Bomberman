@@ -45,6 +45,11 @@ bool Collider::CheckCollision(Collider& other)
 				MoveObject(0.0f, 0.0f);
 				other.MoveObject(intersectsX, 0.0f);
 			}
+
+			if (deltaY < 0.f)
+				other.MoveObject(0.0f, -1.0f);
+			else
+				other.MoveObject(0.0f, +1.0f);
 		}
 		else
 		{
@@ -58,6 +63,11 @@ bool Collider::CheckCollision(Collider& other)
 				MoveObject(0.0f, 0.0f);
 				other.MoveObject(0.0f, intersectsY);
 			}
+
+			if (deltaX < 0.f)
+				other.MoveObject(-1.0, -0.0f);
+			else
+				other.MoveObject(1.0f, 0.0f);
 		}
 	}
 

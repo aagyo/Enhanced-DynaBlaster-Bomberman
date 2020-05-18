@@ -6,4 +6,6 @@ enum class EBlockType {
 	StoneBlock,
 	WallBlock,
 	BorderBlock,
+	PortalBlock,
+	PowerUpBlock,
 };

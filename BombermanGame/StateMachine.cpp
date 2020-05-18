@@ -1,8 +1,6 @@
 #include "StateMachine.h"
 
 #include <iostream>
-#include <memory>
-
 StateMachine::StateMachine() :
 	m_resumeState(false), m_runningState(false)
 {

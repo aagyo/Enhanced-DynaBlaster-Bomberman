@@ -1,8 +1,9 @@
 #pragma once
 #include "Animation.h"
-#include "Block.h"
-#include "BlockType.h"
+#include "Map.h"
 #include <array>
+#include <vector>
+
 
 class Explosion
 {
@@ -10,28 +11,52 @@ class Explosion
 public:
 	Explosion() = default;
 	~Explosion() = default;
+
 public:
-	Explosion(const sf::Vector2f& bombPosition, const uint16_t& radius, std::array<EBlockType, 17 * 17>& m_map, std::array<Block, 17 * 17>& m_blocks);
-	void Update();
+	Explosion(const sf::Vector2f& bombPosition, const uint16_t& radius, Map& m_map);
+	void Update(float deltaTime, sf::RenderWindow& window);
+
+public:
+	sf::RectangleShape GetExplosionShape() const;
+	bool GetExplosionState() const;
 
 private:
 	void PlaceExplosion();
+	void Draw(sf::RenderWindow& window);
 
 private:
-	static const int m_mapWidth = 17;
-	static const int m_mapHeight = 17;
-	std::array<EBlockType, m_mapWidth * m_mapHeight>& m_map;
-	std::array<Block, m_mapWidth * m_mapHeight>& m_blocks;
+	struct AnimationComponents
+	{
+		Animation animation;
+		float frameDuration;
+
+	}m_animationComponents;
+
+	struct BlocksOnDirection
+	{
+		std::vector<sf::Vector2f> left;
+		std::vector<sf::Vector2f> right;
+		std::vector<sf::Vector2f> up;
+		std::vector<sf::Vector2f> down;
+	}m_blockOnDir;
+
+	struct ExplosionStateAnimation
+	{
+		sf::IntRect firstState;
+		sf::IntRect secondState;
+		sf::IntRect thirdState;
+		sf::IntRect finalState;
+	}m_direction;
+
+private:
+	Map m_map;
+	uint16_t m_currentState = 0;
+	uint16_t m_numberOfFrames = 4;
+	std::array<int, 4> m_posFrequency;
 	sf::Vector2f m_center;
 	uint16_t m_radius;
-	float m_explosionTime = 0;
+	bool m_explosionNotFinished = true;
 	sf::RectangleShape m_explosionShape;
 	sf::Texture m_explosionTexture;
-	struct AnimationInfo
-	{
-		float frameDuration;
-		Animation animation;
 
-	} m_animation;
 };
-

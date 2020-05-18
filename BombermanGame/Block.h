@@ -24,9 +24,11 @@ public:
 	void SetBlockType(const EBlockType& blockType);
 	void SetPosition(const sf::Vector2f& coordinates);
 	void SetBlockTexture(sf::Texture* texture, sf::IntRect);
-
+	void SetIsPortal(bool state);
 private:
 	sf::RectangleShape m_blockBody;
 	EBlockType m_blockType;
 	const sf::Texture m_blockTexture;
+
+	bool isPortal;
 };

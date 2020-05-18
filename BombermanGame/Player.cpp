@@ -18,7 +18,7 @@ Player::Player() : m_playerShape(sf::Vector2f(m_playerHeight, m_playerWidth))
 
 	m_animationComponents.animation = Animation(m_direction.stayDirection, 3);
 
-	m_playerShape.setSize(sf::Vector2f(48.f, 48.f));
+	m_playerShape.setSize(sf::Vector2f(43.f, 43.f));
 }
 
 void Player::SetStartPosition()

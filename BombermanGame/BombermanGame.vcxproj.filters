@@ -13,102 +13,174 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Animation">
+      <UniqueIdentifier>{ec5de114-a983-44f8-89cd-8ccb9b557f55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Animation">
+      <UniqueIdentifier>{aecdf1d0-03d1-492e-9151-e90a1632552c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Block">
+      <UniqueIdentifier>{686e7149-182e-4567-9b89-462a1c4a1715}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Block">
+      <UniqueIdentifier>{048211da-165d-46ca-9b51-16d62160a0f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Collider">
+      <UniqueIdentifier>{3866cc19-c357-4110-b5d0-7a71e840f1d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Collider">
+      <UniqueIdentifier>{90595cbc-857a-411c-90f5-e533f27db911}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Time">
+      <UniqueIdentifier>{08ede705-a294-410f-9d9c-0b0b8db24f48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Time">
+      <UniqueIdentifier>{49819965-62f0-41de-b046-20a0f425e1f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GameComponents">
+      <UniqueIdentifier>{8a572ca6-1978-4a5e-a7f6-603fcce8329c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GameComponents">
+      <UniqueIdentifier>{39315c34-d210-472d-b6ac-27406bf30686}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Run">
+      <UniqueIdentifier>{838f620c-5107-42dd-957e-a6fde0192393}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GUIEngine">
+      <UniqueIdentifier>{846fef1d-cb8f-4ce1-8695-ca196f82569f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUIEngine">
+      <UniqueIdentifier>{a19a146d-5610-44ef-ab2c-9e4b2489f022}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Application">
+      <UniqueIdentifier>{3d14726d-0165-4647-b0c4-10c70f325a63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Application">
+      <UniqueIdentifier>{7f98fb2f-333e-4b0e-badc-64e2f5e03335}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BlockType.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Animation.h">
+      <Filter>Header Files\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="Map.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Collider.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="AnimationPlayer.h">
+      <Filter>Header Files\Animation</Filter>
     </ClInclude>
     <ClInclude Include="Block.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Block</Filter>
     </ClInclude>
-    <ClInclude Include="Animation.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="BlockType.h">
+      <Filter>Header Files\Block</Filter>
     </ClInclude>
-    <ClInclude Include="Bomb.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DestroyBlocks.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Collider.h">
+      <Filter>Header Files\Collider</Filter>
     </ClInclude>
     <ClInclude Include="Chronometer.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Time</Filter>
     </ClInclude>
     <ClInclude Include="GameClock.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Time</Filter>
     </ClInclude>
-    <ClInclude Include="Application.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Bomb.h">
+      <Filter>Header Files\GameComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>Header Files\GameComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Header Files\GameComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>Header Files\GUIEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="StateMachine.h">
+      <Filter>Header Files\GUIEngine</Filter>
     </ClInclude>
     <ClInclude Include="IntroState.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\GUIEngine</Filter>
     </ClInclude>
     <ClInclude Include="MenuState.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\GUIEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayState.h">
+      <Filter>Header Files\GUIEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Application.h">
+      <Filter>Header Files\Application</Filter>
     </ClInclude>
     <ClInclude Include="PlayState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="State.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Explosion.h">
+      <Filter>Header Files\GameComponents</Filter>
     </ClInclude>
-    <ClInclude Include="StateMachine.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Portal.h">
+      <Filter>Header Files\GameComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="PowerUp.h">
+      <Filter>Header Files\GameComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="PowerUpType.h">
+      <Filter>Header Files\GameComponents</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Map.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Source Files\Animation</Filter>
     </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Collider.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="AnimationPlayer.cpp">
+      <Filter>Source Files\Animation</Filter>
     </ClCompile>
     <ClCompile Include="Block.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Block</Filter>
     </ClCompile>
-    <ClCompile Include="Animation.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Bomb.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DestroyBlocks.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Collider.cpp">
+      <Filter>Source Files\Collider</Filter>
     </ClCompile>
     <ClCompile Include="GameClock.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Time</Filter>
     </ClCompile>
-    <ClCompile Include="Application.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Bomb.cpp">
+      <Filter>Source Files\GameComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>Source Files\GameComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Source Files\GameComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source Files\Run</Filter>
+    </ClCompile>
+    <ClCompile Include="State.cpp">
+      <Filter>Source Files\GUIEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="StateMachine.cpp">
+      <Filter>Source Files\GUIEngine</Filter>
     </ClCompile>
     <ClCompile Include="IntroState.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\GUIEngine</Filter>
     </ClCompile>
     <ClCompile Include="MenuState.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\GUIEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayState.cpp">
+      <Filter>Source Files\GUIEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Application.cpp">
+      <Filter>Source Files\Application</Filter>
     </ClCompile>
     <ClCompile Include="PlayState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="State.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Explosion.cpp">
+      <Filter>Source Files\GameComponents</Filter>
     </ClCompile>
-    <ClCompile Include="StateMachine.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="PowerUp.cpp">
+      <Filter>Source Files\GameComponents</Filter>
     </ClCompile>
-    <ClCompile Include="Main.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Portal.cpp">
+      <Filter>Source Files\GameComponents</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -5,6 +5,7 @@
 #include "Map.h"
 #include "GameClock.h"
 #include "Bomb.h"
+#include "Explosion.h"
 
 #include <SFML/Graphics.hpp>
 
@@ -22,14 +23,15 @@ public:
 public:
 	void CreateMap();
 	void CheckForCollision();
-
-public:
 	sf::Time GetElapsedTime() const;
+	bool IsPlayerOnTeleport();
+	bool IsPlayerOnPowerUp();
+	void ChangeBlocks();
 
 private:
 	Map m_map;
+	Explosion *m_explosion;
 	Player m_player;
-	Bomb m_bomb;
+	Bomb *m_bomb;
 	GameClock m_clock;
-	float m_deltaTime;
 };

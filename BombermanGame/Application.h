@@ -17,5 +17,5 @@ private:
 	StateMachine m_machine;
 	sf::RenderWindow m_window;
 	const uint32_t m_windowSize = 816;
-	const uint16_t m_framesPerSecond = 60;
+	const uint16_t m_framesPerSecond = 144;
 };

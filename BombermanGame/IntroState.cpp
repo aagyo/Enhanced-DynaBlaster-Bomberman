@@ -35,12 +35,9 @@ IntroState::IntroState(StateMachine& machine, sf::RenderWindow& window, bool rep
 void IntroState::Update()
 {
 	sf::Event event;
-	sf::View view;
 
 	while (m_window.pollEvent(event))
 	{
-
-		//////
 
 		if (event.type == sf::Event::Resized)
 		{
@@ -75,8 +72,6 @@ void IntroState::Update()
 
 			m_window.setView(view);
 		}
-
-		//////
 
 		switch (event.type)
 		{
