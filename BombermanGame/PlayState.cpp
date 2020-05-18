@@ -37,8 +37,7 @@ void PlayState::CheckForCollision()
 	{
 		EBlockType currentBlockType = m_map.GetBlock(blockIndex).GetBlockType();
 
-		if (currentBlockType != EBlockType::EmptyBlock && currentBlockType != EBlockType::PortalBlock && currentBlockType != EBlockType::PowerUpBlock
-			&& currentBlockType != EBlockType::FireBlock)
+		if (currentBlockType != EBlockType::EmptyBlock && currentBlockType != EBlockType::PortalBlock && currentBlockType != EBlockType::PowerUpBlock)
 		{
 			m_map.GetBlock(blockIndex).GetCollider().CheckCollision(*&m_player.GetCollider());
 		}
@@ -50,54 +49,25 @@ sf::Time PlayState::GetElapsedTime() const
 	return m_clock.GetElapsedTime();
 }
 
-void PlayState::DrawExplosion(Bomb* thisBomb, uint16_t thisIndex)
+void PlayState::DrawExplosion(Bomb* thisBomb)
 {
 	if (thisBomb->GetExplosionShow() == false)
 	{
-		m_explosionsList[thisIndex]->Update(m_clock.GetElapsedTime().asSeconds(), m_window);
+		m_explosion = new Explosion(thisBomb->GetBombShape().getPosition(), thisBomb->GetExplosionRadius(), &m_map);
+		m_explosion->Update(m_clock.GetElapsedTime().asSeconds(), m_window);
 		thisBomb->SetExplosionShow(true);
 	}
 	else
 	{
-		m_explosionsList[thisIndex]->Update(m_clock.GetElapsedTime().asSeconds(), m_window);
-		thisBomb->SetExplosionShow(m_explosionsList[thisIndex]->GetExplosionState());
+		m_explosion->Update(m_clock.GetElapsedTime().asSeconds(), m_window);
+		thisBomb->SetExplosionShow(m_explosion->GetExplosionState());
 
 		if (thisBomb->GetExplosionShow() == false)
 		{
-			m_explosionsList.erase(m_explosionsList.begin());
-			m_map.m_bombsList.erase(m_map.m_bombsList.begin());
-			m_player.SetCanPlaceBomb(true);
+			m_map.m_bombsQueue.erase(m_map.m_bombsQueue.begin());
+			delete m_explosion;
 		}
 	}
-}
-
-void PlayState::CreateExplosions()
-{
-	if (!m_map.m_bombsList.empty() && m_explosionsList.size() != m_map.m_bombsList.size())
-	{
-		InsertExplosion(m_map.m_bombsList[m_map.m_bombsList.size() - 1]);
-	}
-	if (!m_map.m_bombsList.empty())
-	{
-		if (m_map.m_bombsList.front()->GetBombStatus() == true)
-			DrawExplosion(m_map.m_bombsList[0], 0);
-		if (m_map.m_bombsList.size() > 1)
-		{
-			for (uint16_t index = 1; index < m_map.m_bombsList.size(); index++)
-			{
-				m_map.EarlyExplode(m_map.m_bombsList[index]);
-				if (m_map.m_bombsList[index]->GetBombStatus() == true)
-				{
-					DrawExplosion(m_map.m_bombsList[index], index);
-				}
-			}
-		}
-	}
-}
-
-void PlayState::InsertExplosion(Bomb* thisBomb)
-{
-	m_explosionsList.push_back(new Explosion(thisBomb->GetBombShape().getPosition(), thisBomb->GetExplosionRadius(), &m_map));
 }
 
 bool PlayState::IsPlayerOnTeleport()
@@ -204,7 +174,7 @@ void PlayState::Update()
 				m_next = StateMachine::Build<MenuState>(m_machine, m_window, false);
 				break;
 			case sf::Keyboard::Space:
-				m_map.GenerateBombs(m_player.GetPlayerShape().getPosition(), m_bombRadius, m_clock.GetElapsedTime().asSeconds(), m_player.GetMaxNoBombs());
+				m_map.GenerateBombs(m_player.GetPlayerShape().getPosition(), bombRadius, m_clock.GetElapsedTime().asSeconds(), m_player.GetMaxNoBombs());
 			default:
 				break;
 			}
@@ -223,11 +193,54 @@ void PlayState::Draw()
 	m_window.draw(m_map);
 	m_map.SetElapsedTime(m_clock.GetElapsedTime().asSeconds());
 
+
+	//if (m_player.GetCanPlaceBomb() && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
+	//{
+	///*	m_bomb = new Bomb(m_map.GetBlock(static_cast<uint16_t>(round(m_player.GetPositionX() / 48))).GetPosition().x,
+	//		m_map.GetBlock(static_cast<uint16_t>(round(m_player.GetPositionY() / 48))).GetPosition().x,
+	//		bombRadius, m_clock.GetElapsedTime().asSeconds());
+	//	m_window.draw(m_bomb->GetBombShape());*/
+	//	m_map.GenerateBombs(m_player.GetPlayerShape().getPosition(), bombRadius, m_clock.GetElapsedTime().asSeconds(),m_player.GetMaxNoBombs());
+	//}
+
 	if (m_map.GetNoBombsDisplayed() == m_player.GetMaxNoBombs())
 		m_player.SetCanPlaceBomb(false);
 
-	CreateExplosions();
+	if (!m_map.m_bombsQueue.empty() && m_map.m_bombsQueue.front()->GetBombStatus() == true)
+	{
+		DrawExplosion(m_map.m_bombsQueue.front());
+		m_player.SetCanPlaceBomb(true);
+	}
+	//else if (m_player.GetCanPlaceBomb() == false)
+	//{
+	//	if (!m_bomb->GetBombStatus() && m_bomb->GetExplosionRadius() != 0)
+	//	{
+	//		m_window.draw(m_bomb->GetBombShape());
+	//		m_bomb->Update(m_clock.GetElapsedTime().asSeconds());
+	//	}
+	//	else
+	//	{
+	//		if (m_bomb->GetExplosionShow() == false)
+	//		{
+	//			m_explosion = new Explosion(m_bomb->GetBombShape().getPosition(), m_bomb->GetExplosionRadius(), &m_map);
+	//			m_explosion->Update(m_clock.GetElapsedTime().asSeconds(), m_window);
+	//			m_bomb->SetExplosionShow(true);
+	//		}
+	//		else
+	//		{
+	//			m_explosion->Update(m_clock.GetElapsedTime().asSeconds(), m_window);
+	//			m_bomb->SetExplosionShow(m_explosion->GetExplosionState());
 
+	//			if (m_bomb->GetExplosionShow() == false)
+	//			{
+	//				//ChangeBlocks();
+	//				m_player.SetCanPlaceBomb(true);
+	//				delete m_explosion;
+	//				delete m_bomb;
+	//			}
+	//		}
+	//	}
+	//}
 	m_window.draw(m_player.GetPlayerShape());
 	m_player.MovePlayer(m_clock.GetElapsedTime().asSeconds());
 	CheckForCollision();
@@ -237,6 +250,8 @@ void PlayState::Draw()
 		m_map.ClearBlock(m_player.GetPlayerShape().getPosition());
 		std::cout << "sters" << "\n";
 	}
+
+
 	// MODIFICA AICI
 
 	if (IsPlayerOnTeleport())

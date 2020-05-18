@@ -71,31 +71,22 @@ bool Map::GenerateDestroyableBlock() const
 	return dis(gen);
 }
 
-void Map::GenerateBombs(const sf::Vector2f& playersPosition, const uint16_t& bombRadius, const float& timeElapsed, const uint16_t& maxNoBombs)
+void Map::GenerateBombs(const sf::Vector2f& playersPosition,const uint16_t& bombRadius,const float& timeElapsed, const uint16_t& maxNoBombs)
 {
-	if (m_bombsList.size() <= maxNoBombs && !m_bombsList.empty())
-	{
-		if (CheckBombsPositions(playersPosition))
-		{
- 			Bomb* newBomb = new Bomb(m_blocks[static_cast<uint16_t>(round(playersPosition.x / 48))].GetPosition().x,
-				m_blocks[static_cast<uint16_t>(round(playersPosition.y / 48))].GetPosition().x,
-				bombRadius, timeElapsed);
-			m_bombsList.push_back(newBomb);
-			lastPlayerPos = playersPosition;
-		}
-	}
-	if(m_bombsList.empty())
+	if (m_bombsQueue.size() <= maxNoBombs && lastPlayerPos!=playersPosition)
 	{
 		Bomb* newBomb = new Bomb(m_blocks[static_cast<uint16_t>(round(playersPosition.x / 48))].GetPosition().x,
 			m_blocks[static_cast<uint16_t>(round(playersPosition.y / 48))].GetPosition().x,
 			bombRadius, timeElapsed);
-		m_bombsList.push_back(newBomb);
+		m_bombsQueue.push_back(newBomb);
+		lastPlayerPos = playersPosition;
 	}
+	sf::RectangleShape x;
 }
 
 uint16_t Map::GetNoBombsDisplayed() const
 {
-	return m_bombsList.size();
+	return m_bombsQueue.size();
 }
 
 void Map::GenerateRandomTeleport() {
@@ -116,7 +107,7 @@ void Map::GenerateRandomTeleport() {
 
 				m_blocks[randomIndex].SetBlockType(EBlockType::PortalBlock);
 				m_blocks[randomIndex].SetIsPortal(true);
-				m_map[randomIndex] = EBlockType::PortalBlock;
+			    m_map[randomIndex] = EBlockType::PortalBlock;
 
 			}
 
@@ -130,26 +121,6 @@ void Map::GenerateRandomPowerUp(const sf::Vector2f& position)
 {
 	m_powerUp = new PowerUp(sf::Vector2f(position));
 	m_powerUp->CreateRandomPowerUp();
-}
-
-bool Map::CheckBombsPositions(sf::Vector2f playerPosition)
-{
-	bool flag = false;
-	for (auto& bomb : m_bombsList)
-	{
-		if (bomb->GetBombShape().getPosition().x != playerPosition.x && bomb->GetBombShape().getPosition().y != playerPosition.y)
-			flag = true;
-	}
-	return flag;
-}
-
-void Map::EarlyExplode(Bomb* bomb)
-{
-	uint16_t bombIndexColumn = (bomb->GetBombShape().getPosition().x + 24) / 48;
-	uint16_t bombIndexLine = (bomb->GetBombShape().getPosition().y + 24) / 48;
-	uint16_t index = bombIndexLine * 17 + bombIndexColumn;
-	if (m_blocks[index].GetBlockType() == EBlockType::FireBlock)
-		bomb->SetBombStatus(true);
 }
 
 void Map::GenerateMapLayout()
@@ -220,8 +191,6 @@ void Map::ExplosionMarker(const sf::Vector2f& position)
 	{
 		m_blocks[index].SetBlockType(EBlockType::FireBlock);
 	}
-	else if (m_blocks[index].GetBlockType() == EBlockType::PowerUpBlock)
-		RemovePowerUp();
 	else if (m_blocks[index].GetBlockType() == EBlockType::StoneBlock)
 		ClearBlock(position);
 	else if (m_blocks[index].GetBlockType() == EBlockType::StoneBlock && m_portal->GetPortalPosition() == position)
@@ -262,7 +231,7 @@ void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
 		target.draw(block.GetBlockBody());
 	}
 
-	for (auto& bomb : m_bombsList)
+	for(auto& bomb:m_bombsQueue)
 	{
 		target.draw(bomb->GetBombShape());
 		bomb->Update(m_elapsedTime);

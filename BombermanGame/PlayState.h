@@ -33,15 +33,13 @@ public:
 	sf::Time GetElapsedTime() const;
 
 private:
-	void CreateExplosions();
-	void DrawExplosion(Bomb* thisBomb, uint16_t thisIndex);
-	void InsertExplosion(Bomb *thisBomb);
+	void DrawExplosion(Bomb* thisBomb);
 
 private:
 	Map m_map;
-	std::vector<Explosion*> m_explosionsList;
+	Explosion *m_explosion;
 	Player m_player;
-	const uint16_t m_bombRadius = 2;
+	const uint16_t bombRadius = 2;
 	GameClock m_clock;
 	sf::Sound m_sound;
 	sf::SoundBuffer m_soundBuffer;

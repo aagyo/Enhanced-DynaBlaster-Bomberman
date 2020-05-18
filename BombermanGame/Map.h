@@ -35,20 +35,18 @@ public:
 	void ClearBlock(const sf::Vector2f& position);
 	void GenerateBombs(const sf::Vector2f& playersPosition,const uint16_t& bombRadius,const float& timeElapsed, const uint16_t& maxNoBombs);
 	uint16_t GetNoBombsDisplayed() const;
-	void EarlyExplode(Bomb* bomb);
 
 private:
 	void GenerateMapLayout();
 	bool GenerateDestroyableBlock() const;
 	void GenerateRandomTeleport();
 	void GenerateRandomPowerUp(const sf::Vector2f& position);
-	bool CheckBombsPositions(sf::Vector2f playerPosition);
 
 private:
 	void draw(sf::RenderTarget& target, sf::RenderStates states)const override;
 
 public:
-	std::vector<Bomb*> m_bombsList;
+	std::vector<Bomb*> m_bombsQueue;
 
 private:
 	sf::VertexArray m_vertices;
