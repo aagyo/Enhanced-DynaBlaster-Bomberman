@@ -580,3 +580,15 @@
 [2020-05-18 20:53:17] [INFO] Game Paused
 [2020-05-18 20:53:18] [INFO] Intro State
 [2020-05-18 20:53:19] [DEBUG] **************GAME CLOSED****************
+[2020-05-18 20:56:14] [INFO] 
+[2020-05-18 20:56:14] [DEBUG] **************New Game Instance*************
+[2020-05-18 20:56:14] [INFO] 
+[2020-05-18 20:56:14] [INFO] Logger has been initialized
+[2020-05-18 20:56:15] [INFO] Intro State
+[2020-05-18 20:56:16] [INFO] LevelState
+[2020-05-18 20:56:16] [INFO] New Level:
+[2020-05-18 20:56:16] [INFO] 0
+[2020-05-18 20:56:18] [INFO] Playing state
+[2020-05-18 20:56:57] [INFO] Game Paused
+[2020-05-18 20:56:58] [INFO] Intro State
+[2020-05-18 20:56:59] [DEBUG] **************GAME CLOSED****************
