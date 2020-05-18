@@ -7,6 +7,11 @@ public:
 	Collider(sf::RectangleShape& hitBoxBody);
 	~Collider() = default;
 
+	Collider(const Collider& other) = default;
+	Collider(Collider&& other) noexcept = default;
+	Collider& operator=(const Collider& other) = default;
+	Collider& operator=(Collider&& other) noexcept = default;
+
 public:
 	sf::Vector2f GetPosition() const;
 	sf::Vector2f GetHalfSize() const;

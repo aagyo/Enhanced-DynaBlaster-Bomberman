@@ -10,71 +10,113 @@ DestroyBlocks::DestroyBlocks(sf::RectangleShape& m_player, std::array<EBlockType
 
 void DestroyBlocks::ChangeBlocks()
 {
-	float playerPositionIndexColumn = GetPlayerPostion().x / 48.f;
-	float playerPositionIndexLine = GetPlayerPostion().y / 48.f;
-	uint16_t indexInMap = 0;
+	int playerPositionIndexColumn = (GetPlayerPostion().x + 24) / 48;
+	int playerPositionIndexLine = (GetPlayerPostion().y + 24) / 48;
+
+
+
+	sf::Texture m_tileset;
+	
+	m_tileset.loadFromFile("../_external/sprites/boamberman.png");
+
+	std::cout << playerPositionIndexColumn << " " << playerPositionIndexLine << "\n";
+
+
+	uint16_t IndexPlayer = playerPositionIndexLine * 17 + playerPositionIndexColumn;
+
+	std::cout << IndexPlayer << "\n";
 
 	// WEST
-	if (m_blocks[indexInMap - 1].GetBlockType() != EBlockType::WallBlock) {
+	if (m_blocks[IndexPlayer - 1].GetBlockType() != EBlockType::WallBlock && m_blocks[IndexPlayer - 1].GetBlockType() != EBlockType::BorderBlock) {
 
-		if (m_blocks[indexInMap - 2].GetBlockType() == EBlockType::StoneBlock && m_blocks[indexInMap - 1].GetBlockType() == EBlockType::StoneBlock)
+		if (m_blocks[IndexPlayer - 2].GetBlockType() == EBlockType::StoneBlock && m_blocks[IndexPlayer - 1].GetBlockType() == EBlockType::StoneBlock)
 		{
-			m_blocks[indexInMap - 2].SetBlockType(EBlockType::EmptyBlock);
-			m_blocks[indexInMap - 1].SetBlockType(EBlockType::EmptyBlock);
+			m_blocks[IndexPlayer - 2].SetBlockType(EBlockType::EmptyBlock);
+			m_blocks[IndexPlayer - 1].SetBlockType(EBlockType::EmptyBlock);
+
+			m_blocks[IndexPlayer - 1].SetBlockTexture(&m_tileset, sf::IntRect(144, 0, 48, 48));
+			m_blocks[IndexPlayer - 2].SetBlockTexture(&m_tileset, sf::IntRect(48, 0, 48, 48));
+
+			std::cout << "change ";
 		}
-		if (m_blocks[indexInMap - 2].GetBlockType() == EBlockType::WallBlock && m_blocks[indexInMap - 1].GetBlockType() == EBlockType::StoneBlock)
+		if (m_blocks[IndexPlayer - 2].GetBlockType() != EBlockType::StoneBlock && m_blocks[IndexPlayer - 1].GetBlockType() == EBlockType::StoneBlock)
 		{
-			m_blocks[indexInMap - 1].SetBlockType(EBlockType::EmptyBlock);
-
+			m_blocks[IndexPlayer - 1].SetBlockType(EBlockType::EmptyBlock);
+			m_blocks[IndexPlayer - 1].SetBlockTexture(&m_tileset, sf::IntRect(48, 0, 48, 48));
+			std::cout << "change ";
 		}
-	}
 
-	if (m_blocks[indexInMap + 1].GetBlockType() != EBlockType::WallBlock) {
-
-		if (m_blocks[indexInMap + 2].GetBlockType() == EBlockType::StoneBlock && m_blocks[indexInMap + 1].GetBlockType() == EBlockType::StoneBlock)
+		if (m_blocks[IndexPlayer - 2].GetBlockType() == EBlockType::StoneBlock && m_blocks[IndexPlayer - 1].GetBlockType() == EBlockType::EmptyBlock)
 		{
-			m_blocks[indexInMap + 2].SetBlockType(EBlockType::EmptyBlock);
-			m_blocks[indexInMap + 1].SetBlockType(EBlockType::EmptyBlock);
-
-		}
-		if (m_blocks[indexInMap + 2].GetBlockType() == EBlockType::WallBlock && m_blocks[indexInMap + 1].GetBlockType() == EBlockType::StoneBlock)
-		{
-			m_blocks[indexInMap + 1].SetBlockType(EBlockType::EmptyBlock);
-
+			m_blocks[IndexPlayer - 2].SetBlockType(EBlockType::EmptyBlock);
+			m_blocks[IndexPlayer - 2].SetBlockTexture(&m_tileset, sf::IntRect(48, 0, 48, 48));
+			std::cout << "change ";
 		}
 	}
 
-	if (m_blocks[indexInMap - 17].GetBlockType() != EBlockType::WallBlock) {
+	if (m_blocks[IndexPlayer + 1].GetBlockType() != EBlockType::WallBlock && m_blocks[IndexPlayer + 1].GetBlockType() != EBlockType::BorderBlock) {
 
-		if (m_blocks[indexInMap - 34].GetBlockType() == EBlockType::StoneBlock && m_blocks[indexInMap - 17].GetBlockType() == EBlockType::StoneBlock)
+		if (m_blocks[IndexPlayer + 2].GetBlockType() == EBlockType::StoneBlock && m_blocks[IndexPlayer + 1].GetBlockType() == EBlockType::StoneBlock)
 		{
-			m_blocks[indexInMap - 34].SetBlockType(EBlockType::EmptyBlock);
-			m_blocks[indexInMap - 17].SetBlockType(EBlockType::EmptyBlock);
+			m_blocks[IndexPlayer + 2].SetBlockType(EBlockType::EmptyBlock);
+			m_blocks[IndexPlayer + 1].SetBlockType(EBlockType::EmptyBlock);
 
+			m_blocks[IndexPlayer + 2].SetBlockTexture(&m_tileset, sf::IntRect(0, 0, 48, 48));
+			m_blocks[IndexPlayer + 1].SetBlockTexture(&m_tileset, sf::IntRect(0, 0, 48, 48));
+			std::cout << "change ";
 		}
-		if (m_blocks[indexInMap - 34].GetBlockType() == EBlockType::WallBlock && m_blocks[indexInMap - 17].GetBlockType() == EBlockType::StoneBlock)
+		if (m_blocks[IndexPlayer + 2].GetBlockType() != EBlockType::StoneBlock && m_blocks[IndexPlayer + 1].GetBlockType() == EBlockType::StoneBlock)
 		{
-			m_blocks[indexInMap - 17].SetBlockType(EBlockType::EmptyBlock);
-
+			m_blocks[IndexPlayer + 1].SetBlockType(EBlockType::EmptyBlock);
+			m_blocks[IndexPlayer + 1].SetBlockTexture(&m_tileset, sf::IntRect(48, 0, 48, 48));
+			std::cout << "change ";
 		}
-	}
 
-	if (m_blocks[indexInMap + 17].GetBlockType() != EBlockType::WallBlock) {
-
-		if (m_blocks[indexInMap + 34].GetBlockType() == EBlockType::StoneBlock && m_blocks[indexInMap + 17].GetBlockType() == EBlockType::StoneBlock)
+		if (m_blocks[IndexPlayer + 2].GetBlockType() == EBlockType::StoneBlock && m_blocks[IndexPlayer + 1].GetBlockType() == EBlockType::EmptyBlock)
 		{
-			m_blocks[indexInMap + 34].SetBlockType(EBlockType::EmptyBlock);
-			m_blocks[indexInMap + 17].SetBlockType(EBlockType::EmptyBlock);
-
-		}
-		if (m_blocks[indexInMap + 34].GetBlockType() == EBlockType::WallBlock && m_blocks[indexInMap + 17].GetBlockType() == EBlockType::StoneBlock)
-		{
-			m_blocks[indexInMap + 17].SetBlockType(EBlockType::EmptyBlock);
-
+			m_blocks[IndexPlayer + 2].SetBlockType(EBlockType::EmptyBlock);
+			m_blocks[IndexPlayer + 2].SetBlockTexture(&m_tileset, sf::IntRect(48, 0, 48, 48));
+			std::cout << "change ";
 		}
 	}
 
+	if (m_blocks[IndexPlayer - 17].GetBlockType() != EBlockType::WallBlock && m_blocks[IndexPlayer - 17].GetBlockType() != EBlockType::BorderBlock) {
+
+		if (m_blocks[IndexPlayer - 34].GetBlockType() == EBlockType::StoneBlock && m_blocks[IndexPlayer - 17].GetBlockType() == EBlockType::StoneBlock)
+		{
+			m_blocks[IndexPlayer - 34].SetBlockType(EBlockType::EmptyBlock);
+			m_blocks[IndexPlayer - 17].SetBlockType(EBlockType::EmptyBlock);
+			m_blocks[IndexPlayer - 17].SetBlockTexture(&m_tileset, sf::IntRect(48, 0, 48, 48));
+			m_blocks[IndexPlayer - 34].SetBlockTexture(&m_tileset, sf::IntRect(48, 0, 48, 48));
+			std::cout << "change ";
+		}
+		if (m_blocks[IndexPlayer - 34].GetBlockType() != EBlockType::StoneBlock && m_blocks[IndexPlayer - 17].GetBlockType() == EBlockType::StoneBlock)
+		{
+			m_blocks[IndexPlayer - 17].SetBlockType(EBlockType::EmptyBlock);
+			m_blocks[IndexPlayer - 17].SetBlockTexture(&m_tileset, sf::IntRect(48, 0, 48, 48));
+			std::cout << "change ";
+		}
+	}
+
+	if (m_blocks[IndexPlayer + 17].GetBlockType() != EBlockType::WallBlock && m_blocks[IndexPlayer + 17].GetBlockType() != EBlockType::BorderBlock) {
+
+		if (m_blocks[IndexPlayer + 34].GetBlockType() == EBlockType::StoneBlock && m_blocks[IndexPlayer + 17].GetBlockType() == EBlockType::StoneBlock)
+		{
+			m_blocks[IndexPlayer + 34].SetBlockType(EBlockType::EmptyBlock);
+			m_blocks[IndexPlayer + 17].SetBlockType(EBlockType::EmptyBlock);
+			m_blocks[IndexPlayer + 17].SetBlockTexture(&m_tileset, sf::IntRect(48, 0, 48, 48));
+			m_blocks[IndexPlayer + 34].SetBlockTexture(&m_tileset, sf::IntRect(48, 0, 48, 48));
+			std::cout << "change ";
+		}
+		if (m_blocks[IndexPlayer + 34].GetBlockType() != EBlockType::StoneBlock && m_blocks[IndexPlayer + 17].GetBlockType() == EBlockType::StoneBlock)
+		{
+			m_blocks[IndexPlayer + 17].SetBlockType(EBlockType::EmptyBlock);
+			m_blocks[IndexPlayer + 17].SetBlockTexture(&m_tileset, sf::IntRect(48, 0, 48, 48));
+			std::cout << "change ";
+		}
+	}
 }
+
 
 sf::Vector2f DestroyBlocks::GetPlayerPostion() const
 {

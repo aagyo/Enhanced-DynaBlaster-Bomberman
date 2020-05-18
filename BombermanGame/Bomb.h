@@ -1,5 +1,5 @@
 #pragma once
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
 #include "Animation.h"
 
 class Bomb
@@ -7,18 +7,19 @@ class Bomb
 public:
 	Bomb() = default;
 	~Bomb() = default;
-	Bomb(const Bomb & other) = default;
-	Bomb(Bomb && other) noexcept = default;
-	Bomb& operator=(Bomb && other) noexcept = default;
+
+	Bomb(const Bomb& other) = default;
+	Bomb(Bomb&& other) noexcept = default;
+	Bomb& operator=(Bomb&& other) noexcept = default;
 
 public:
-	Bomb(const float playerXPosition, const float playerYPosition, const uint16_t & radius, const float trigger);
+	Bomb(const float playerXPosition, const float playerYPosition, uint16_t& radius, const float trigger);
 
 public:
 	uint16_t GetExplosionRadius() const;
 	const sf::RectangleShape& GetBombShape() const;
 	bool GetBombStatus() const;
-
+	void SetBombStatus(const bool& newStatus);
 public:
 	void Update(float elapsedTime);
 	void operator=(const Bomb& bomb);

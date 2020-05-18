@@ -1,6 +1,5 @@
 #include "GameClock.h"
 
-
 GameClock::GameClock()
 {
 	m_clock.reset();

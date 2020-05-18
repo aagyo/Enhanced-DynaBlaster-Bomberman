@@ -5,11 +5,11 @@ class GameMenu
 {
 public:
 	GameMenu() = default;
-	~GameMenu() = default;
+	~GameMenu() = default;	
 	GameMenu(const GameMenu& other) = default;
-	GameMenu(GameMenu&& other) noexcept = default;
-	GameMenu& operator=(const GameMenu& other) = default;
-	GameMenu& operator=(GameMenu&& other) noexcept = default;
+	GameMenu(GameMenu && other) noexcept = default;
+	GameMenu& operator=(const GameMenu & other) = default;
+	GameMenu& operator=(GameMenu && other) noexcept = default;
 
 public:
 	GameMenu(float width, float height);

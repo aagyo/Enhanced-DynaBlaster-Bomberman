@@ -4,7 +4,7 @@
 int main()
 {
 	std::cout << "Game in progress :) \n";
-	Window _wind;
-	_wind.ShowWindow();
+	Window gameWindow;
+	gameWindow.ShowWindow();
 	return 0;
 }

@@ -9,10 +9,10 @@ class Block
 public:
 	Block();
 	~Block() = default;
-	Block(const Block & other) = default;
-	Block(Block && other) noexcept = default;
-	Block& operator=(const Block & other) = default;
-	Block& operator=(Block && other) noexcept = default;
+	Block(const Block& other) = default;
+	Block(Block&& other) noexcept = default;
+	Block& operator=(const Block& other) = default;
+	Block& operator=(Block&& other) noexcept = default;
 
 public:
 	EBlockType GetBlockType() const;
@@ -24,9 +24,10 @@ public:
 	void SetBlockType(const EBlockType& blockType);
 	void SetPosition(const sf::Vector2f& coordinates);
 	void SetBlockTexture(sf::Texture* texture, sf::IntRect);
+	void SetBlock(sf::Texture texture);
 
 private:
 	sf::RectangleShape m_blockBody;
 	EBlockType m_blockType;
-	const sf::Texture m_blockTexture;
+	sf::Texture m_blockTexture;
 };

@@ -21,7 +21,7 @@ void Map::CreateTilesOnMap(const sf::Vector2u& tileSize)
 			uint16_t textureLineIndex = tileNumberIndex % (m_tileset.getSize().x / tileSize.x);
 			uint16_t textureColumnIndex = tileNumberIndex / (m_tileset.getSize().x / tileSize.x);
 
-			m_blocks[tileNumber].SetPosition(sf::Vector2f(heightIndex * tileSize.x, widthIndex * tileSize.y));
+			m_blocks[tileNumber].SetPosition(sf::Vector2f( widthIndex * tileSize.x, heightIndex * tileSize.y));
 			m_blocks[tileNumber].SetBlockType(m_map[tileNumber]);
 			m_blocks[tileNumber].SetBlockTexture(&m_tileset, sf::IntRect(textureLineIndex * tileSize.x, textureColumnIndex * tileSize.y, tileSize.x, tileSize.y));
 

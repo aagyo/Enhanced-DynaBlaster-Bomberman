@@ -12,7 +12,7 @@ Player::Player() : m_playerShape(sf::Vector2f(m_playerHeight, m_playerWidth))/*,
 	m_playerShape.setTexture(&m_playerTexture);
 }
 
-void Player::SetStartPosition() 
+void Player::SetStartPosition()
 {
 	m_playerShape.move(m_startPositionCoord, m_startPositionCoord);
 }

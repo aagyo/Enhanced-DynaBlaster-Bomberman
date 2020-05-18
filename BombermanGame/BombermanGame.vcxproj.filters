@@ -33,22 +33,25 @@
     <ClInclude Include="Block.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Bomb.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Animation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GameClock.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Chronometer.h">
+    <ClInclude Include="Bomb.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DestroyBlocks.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameMenu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Chronometer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameClock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Explosion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -71,19 +74,22 @@
     <ClCompile Include="Block.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Bomb.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Animation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GameClock.cpp">
+    <ClCompile Include="Bomb.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DestroyBlocks.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GameMenu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameClock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Explosion.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
