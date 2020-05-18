@@ -34,16 +34,6 @@ void Map::CreateTilesOnMap(const sf::Vector2u& tileSize)
 
 	GenerateRandomTeleport();
 
-	m_barTexture.loadFromFile("../_external/sprites/bar.png");
-	m_barTexture.setSmooth(true);
-	m_bar.setTexture(m_barTexture);
-	m_bar.setPosition(0.f, 816.f);
-
-	m_font.loadFromFile("../_external/font/bm.ttf");
-	m_text.setString("BOMBS - 9   LIFES - 3   CLOCK - 2:30");
-	m_text.setFont(m_font);
-	m_text.setCharacterSize(25);
-	m_text.setPosition(150.f, 816.f);
 }
 
 Block& Map::GetBlock(uint16_t position)
@@ -71,22 +61,23 @@ bool Map::GenerateDestroyableBlock() const
 	return dis(gen);
 }
 
-void Map::GenerateBombs(const sf::Vector2f& playersPosition,const uint16_t& bombRadius,const float& timeElapsed, const uint16_t& maxNoBombs)
+void Map::GenerateBombs(const sf::Vector2f& playersPosition, const uint16_t& bombRadius, const float& timeElapsed, const uint16_t& maxNoBombs)
 {
-	if (m_bombsQueue.size() <= maxNoBombs && lastPlayerPos!=playersPosition)
+	if (m_bombsList.size() < maxNoBombs)
 	{
-		Bomb* newBomb = new Bomb(m_blocks[static_cast<uint16_t>(round(playersPosition.x / 48))].GetPosition().x,
-			m_blocks[static_cast<uint16_t>(round(playersPosition.y / 48))].GetPosition().x,
-			bombRadius, timeElapsed);
-		m_bombsQueue.push_back(newBomb);
-		lastPlayerPos = playersPosition;
+		if (CheckBombsPositions(playersPosition) == true)
+		{
+			Bomb* newBomb = new Bomb(m_blocks[static_cast<uint16_t>(round(playersPosition.x / 48))].GetPosition().x,
+				m_blocks[static_cast<uint16_t>(round(playersPosition.y / 48))].GetPosition().x,
+				bombRadius, timeElapsed);
+			m_bombsList.push_back(newBomb);
+		}
 	}
-	sf::RectangleShape x;
 }
 
 uint16_t Map::GetNoBombsDisplayed() const
 {
-	return m_bombsQueue.size();
+	return m_bombsList.size();
 }
 
 void Map::GenerateRandomTeleport() {
@@ -99,28 +90,73 @@ void Map::GenerateRandomTeleport() {
 
 		uint16_t randomIndex = 0;
 
-		while (m_map[randomIndex] != EBlockType::PortalBlock)
+		while (m_blocks[randomIndex].GetIsPortal() != true)
 		{
 			randomIndex = dis(gen);
 
 			if (m_map[randomIndex] == EBlockType::StoneBlock) {
 
-				m_blocks[randomIndex].SetBlockType(EBlockType::PortalBlock);
 				m_blocks[randomIndex].SetIsPortal(true);
-			    m_map[randomIndex] = EBlockType::PortalBlock;
 
 			}
-
 		}
-
-		m_portal = new Portal(sf::Vector2f(m_blocks[randomIndex].GetBlockBody().getPosition()));
 	}
+}
+
+void Map::IsPortal(Block& block) {
+
+	m_portal = new Portal(sf::Vector2f(block.GetBlockBody().getPosition()));
+	block.SetBlockType(EBlockType::PortalBlock);
+	m_portal->SetIsVisible(true);
 }
 
 void Map::GenerateRandomPowerUp(const sf::Vector2f& position)
 {
 	m_powerUp = new PowerUp(sf::Vector2f(position));
 	m_powerUp->CreateRandomPowerUp();
+}
+
+bool Map::CheckBombsPositions(sf::Vector2f playerPosition)
+{
+	bool flag = false;
+	if (m_bombsList.empty())
+		flag = true;
+	else
+	{
+		std::vector<uint16_t> bombsPositions;
+		for (auto& bomb : m_bombsList)
+		{
+			uint16_t bombIndexColumn = (bomb->GetBombShape().getPosition().x + 24) / 48;
+			uint16_t bombIndexLine = (bomb->GetBombShape().getPosition().y + 24) / 48;
+			uint16_t bombsIndex = bombIndexLine * 17 + bombIndexColumn;
+			bombsPositions.push_back(bombsIndex);
+		}
+		uint16_t playerIndexColumn = (playerPosition.x + 24) / 48;
+		uint16_t playerIndexLine = (playerPosition.y + 24) / 48;
+		uint16_t playersIndex = playerIndexLine * 17 + playerIndexColumn;
+		if (std::find(bombsPositions.begin(), bombsPositions.end(), playersIndex) != bombsPositions.end())
+			return false;
+		else
+			return true;
+	}
+	return flag;
+}
+
+void Map::EarlyExplode(Bomb* bomb)
+{
+	uint16_t bombIndexColumn = (bomb->GetBombShape().getPosition().x + 24) / 48;
+	uint16_t bombIndexLine = (bomb->GetBombShape().getPosition().y + 24) / 48;
+	uint16_t index = bombIndexLine * 17 + bombIndexColumn;
+	if (m_blocks[index].GetBlockType() == EBlockType::FireBlock)
+		bomb->SetBombStatus(true);
+}
+
+void Map::ClearFireBlocks()
+{
+	for (auto& fireBlock : fireBlocks)
+	{
+		m_blocks[fireBlock].SetBlockType(EBlockType::EmptyBlock);
+	}
 }
 
 void Map::GenerateMapLayout()
@@ -166,6 +202,11 @@ void Map::GenerateMapLayout()
 	m_map[35] = EBlockType::EmptyBlock;
 }
 
+PowerUp* Map::GetPower()
+{
+	return m_powerUp;
+}
+
 void Map::ExplosionMarker(const sf::Vector2f& position)
 {
 	std::random_device rd;
@@ -190,14 +231,15 @@ void Map::ExplosionMarker(const sf::Vector2f& position)
 	else if (m_blocks[index].GetBlockType() == EBlockType::EmptyBlock)
 	{
 		m_blocks[index].SetBlockType(EBlockType::FireBlock);
+		fireBlocks.push_back(index);
 	}
-	else if (m_blocks[index].GetBlockType() == EBlockType::StoneBlock)
+	else if (m_blocks[index].GetBlockType() == EBlockType::PowerUpBlock)
+		RemovePowerUp();
+	else if (m_blocks[index].GetBlockType() == EBlockType::StoneBlock && m_blocks[index].GetIsPortal() != true)
 		ClearBlock(position);
-	else if (m_blocks[index].GetBlockType() == EBlockType::StoneBlock && m_portal->GetPortalPosition() == position)
+	else if (m_blocks[index].GetBlockType() == EBlockType::StoneBlock && m_blocks[index].GetIsPortal() == true)
 	{
-		ClearBlock(position);
-		m_blocks[index].SetBlockType(EBlockType::PortalBlock);
-		m_portal->SetIsVisible(true);
+		IsPortal(m_blocks[index]);
 	}
 }
 
@@ -231,13 +273,13 @@ void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
 		target.draw(block.GetBlockBody());
 	}
 
-	for(auto& bomb:m_bombsQueue)
+	for (auto& bomb : m_bombsList)
 	{
 		target.draw(bomb->GetBombShape());
 		bomb->Update(m_elapsedTime);
 	}
 
-	if (m_portal->GetIsVisible() == true)
+	if (m_portal != nullptr && m_portal->GetIsVisible() == true)
 	{
 		target.draw(m_portal->GetShape());
 		m_portal->Update(m_elapsedTime);
@@ -248,6 +290,4 @@ void Map::draw(sf::RenderTarget& target, sf::RenderStates states) const
 		target.draw(m_powerUp->GetShape());
 	}
 
-	target.draw(m_bar);
-	target.draw(m_text);
 }

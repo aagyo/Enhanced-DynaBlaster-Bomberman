@@ -4,8 +4,8 @@
 #include "GameOverState.h"
 #include "GameLostState.h"
 #include "Player.h"
+#include "Gamebar.h"
 
-#include <iostream>
 #include <memory>
 #include <SFML/Graphics.hpp>
 
@@ -13,13 +13,23 @@ PlayState::PlayState(StateMachine& machine, sf::RenderWindow& window, bool repla
 	State(machine, window, replace)
 {
 	CreateMap();
+	m_bar = new GameBar();
 
-	m_soundBuffer.loadFromFile("../_external/audio/play.flac");
-	m_sound.setBuffer(m_soundBuffer);
-	m_sound.play();
-	m_sound.setLoop(true);
+	m_soundBuffer = new sf::SoundBuffer;
+	m_soundBuffer->loadFromFile("../_external/audio/play.flac");
+
+	m_sound = new sf::Sound;
+	m_sound->setBuffer(*m_soundBuffer);
+
+	m_sound->play();
 
 	std::cout << "PlayState Ctor" << std::endl;
+}
+
+void PlayState::DeleteMusicBuffer()
+{
+	m_sound->~Sound();
+	m_soundBuffer->~SoundBuffer();
 }
 
 void PlayState::CreateMap()
@@ -32,15 +42,76 @@ void PlayState::CreateMap()
 void PlayState::CheckForCollision()
 {
 	const uint32_t numberOfBlocks = 289;
-
-	for (uint16_t blockIndex = 0; blockIndex < numberOfBlocks; blockIndex++)
-	{
-		EBlockType currentBlockType = m_map.GetBlock(blockIndex).GetBlockType();
-
-		if (currentBlockType != EBlockType::EmptyBlock && currentBlockType != EBlockType::PortalBlock && currentBlockType != EBlockType::PowerUpBlock)
+	if (m_player.GetIsCollision() == true) {
+		for (uint16_t blockIndex = 0; blockIndex < numberOfBlocks; blockIndex++)
 		{
-			m_map.GetBlock(blockIndex).GetCollider().CheckCollision(*&m_player.GetCollider());
+			EBlockType currentBlockType = m_map.GetBlock(blockIndex).GetBlockType();
+
+			if (currentBlockType != EBlockType::EmptyBlock && currentBlockType != EBlockType::PortalBlock && currentBlockType != EBlockType::PowerUpBlock
+				&& currentBlockType != EBlockType::FireBlock)
+			{
+				m_map.GetBlock(blockIndex).GetCollider().CheckCollision(*&m_player.GetCollider());
+			}
 		}
+	}
+	else {
+
+		for (uint16_t blockIndex = 0; blockIndex < numberOfBlocks; blockIndex++)
+		{
+			EBlockType currentBlockType = m_map.GetBlock(blockIndex).GetBlockType();
+
+			if (currentBlockType != EBlockType::EmptyBlock && currentBlockType != EBlockType::PortalBlock && currentBlockType != EBlockType::PowerUpBlock
+				&& currentBlockType != EBlockType::FireBlock && currentBlockType != EBlockType::StoneBlock)
+			{
+				m_map.GetBlock(blockIndex).GetCollider().CheckCollision(*&m_player.GetCollider());
+			}
+		}
+	}
+}
+
+void PlayState::StatusUpdate(const PowerType& powerUp)
+{
+	switch (powerUp)
+	{
+	case PowerType::BombUp:
+		m_player.SetNumberOfBombs(1);
+		break;
+
+	case PowerType::GoldBomb:
+		m_player.SetNumberOfBombs(9);
+		break;
+
+	case PowerType::BlockPasser:
+		m_player.SetIsCollision(false);
+		break;
+
+	case PowerType::Fire:
+		m_player.SetRadius(1);
+		break;
+
+	case PowerType::GoldFire:
+		m_player.SetRadius(9);
+		break;
+
+	case PowerType::Skate:
+		m_player.SetPlayerSpeed(3.0f);
+		break;
+
+	case PowerType::GoldSkate:
+		m_player.SetPlayerSpeed(3.0f);
+		break;
+
+	case PowerType::Clock:
+		m_bar->SetAddTime(30);
+		break;
+
+	case PowerType::LifeUp:
+		m_player.SetLife(1);
+		m_bar->SetLifeText(m_player.GetNumberOfLives());
+		break;
+
+	default:
+		break;
 	}
 }
 
@@ -49,25 +120,55 @@ sf::Time PlayState::GetElapsedTime() const
 	return m_clock.GetElapsedTime();
 }
 
-void PlayState::DrawExplosion(Bomb* thisBomb)
+void PlayState::DrawExplosion(Bomb* thisBomb, uint16_t thisIndex)
 {
 	if (thisBomb->GetExplosionShow() == false)
 	{
-		m_explosion = new Explosion(thisBomb->GetBombShape().getPosition(), thisBomb->GetExplosionRadius(), &m_map);
-		m_explosion->Update(m_clock.GetElapsedTime().asSeconds(), m_window);
+		m_explosionsList[thisIndex]->Update(m_clock.GetElapsedTime().asSeconds(), m_window);
 		thisBomb->SetExplosionShow(true);
 	}
 	else
 	{
-		m_explosion->Update(m_clock.GetElapsedTime().asSeconds(), m_window);
-		thisBomb->SetExplosionShow(m_explosion->GetExplosionState());
+		m_explosionsList[thisIndex]->Update(m_clock.GetElapsedTime().asSeconds(), m_window);
+		thisBomb->SetExplosionShow(m_explosionsList[thisIndex]->GetExplosionState());
 
 		if (thisBomb->GetExplosionShow() == false)
 		{
-			m_map.m_bombsQueue.erase(m_map.m_bombsQueue.begin());
-			delete m_explosion;
+			m_explosionsList.erase(m_explosionsList.begin());
+			m_map.m_bombsList.erase(m_map.m_bombsList.begin());
+			m_map.ClearFireBlocks();
+			m_player.SetCanPlaceBomb(true);
 		}
 	}
+}
+
+void PlayState::CreateExplosions()
+{
+	if (!m_map.m_bombsList.empty() && m_explosionsList.size() != m_map.m_bombsList.size())
+	{
+		InsertExplosion(m_map.m_bombsList[m_map.m_bombsList.size() - 1]);
+	}
+	if (!m_map.m_bombsList.empty())
+	{
+		if (m_map.m_bombsList.front()->GetBombStatus() == true)
+			DrawExplosion(m_map.m_bombsList[0], 0);
+		if (m_map.m_bombsList.size() > 1)
+		{
+			for (uint16_t index = 1; index < m_map.m_bombsList.size(); index++)
+			{
+				m_map.EarlyExplode(m_map.m_bombsList[index]);
+				if (m_map.m_bombsList[index]->GetBombStatus() == true)
+				{
+					DrawExplosion(m_map.m_bombsList[index], index);
+				}
+			}
+		}
+	}
+}
+
+void PlayState::InsertExplosion(Bomb* thisBomb)
+{
+	m_explosionsList.push_back(new Explosion(thisBomb->GetBombShape().getPosition(), thisBomb->GetExplosionRadius(), &m_map));
 }
 
 bool PlayState::IsPlayerOnTeleport()
@@ -93,9 +194,6 @@ bool PlayState::IsPlayerOnPowerUp() {
 
 	uint16_t indexPlayer = playerPositionIndexLine * 17 + playerPositionIndexColumn;
 
-
-	std::cout << indexPlayer << "\n";
-
 	if (m_map.GetBlock(indexPlayer).GetBlockType() == EBlockType::PowerUpBlock)
 	{
 		return true;
@@ -104,17 +202,50 @@ bool PlayState::IsPlayerOnPowerUp() {
 	return false;
 }
 
+bool PlayState::IsTimeZero()
+{
+	if (m_bar->GetTimeFinished() == true)
+	{
+		m_player.SetLife(-1);
+		return true;
+	}
+	return false;
+}
+
+void PlayState::IsPlayerOnFireBlock()
+{
+	int playerPositionIndexColumn = (m_player.GetPositionX() + 24) / 48;
+	int playerPositionIndexLine = (m_player.GetPositionY() + 24) / 48;
+
+	uint16_t indexPlayer = playerPositionIndexLine * 17 + playerPositionIndexColumn;
+
+	if (m_map.GetBlock(indexPlayer).GetBlockType() == EBlockType::FireBlock)
+	{
+		m_wasPlayerOnFire = true;
+	}
+}
+
 void PlayState::Pause()
 {
-	m_clock.Pause();
-	m_sound.pause();
+
+	DeleteMusicBuffer();
+
+
 	std::cout << "PlayState Pause" << std::endl;
 }
 
 void PlayState::Resume()
 {
 	m_clock.Resume();
-	m_sound.play();
+
+	m_soundBuffer = new sf::SoundBuffer;
+	m_soundBuffer->loadFromFile("../_external/audio/play.flac");
+
+	m_sound = new sf::Sound;
+	m_sound->setBuffer(*m_soundBuffer);
+
+	m_sound->play();
+
 	std::cout << "PlayState Resume" << std::endl;
 }
 
@@ -122,6 +253,7 @@ void PlayState::Update()
 {
 	sf::Event event;
 	m_clock.Resume();
+	bool pressed = false;
 
 	while (m_window.pollEvent(event))
 	{
@@ -138,10 +270,10 @@ void PlayState::Update()
 
 			sf::View view = m_window.getDefaultView();
 
-			if (window_width < 816 || window_height < 816)
+			if (window_width < 816 || window_height < 864)
 			{
-				view.setViewport(sf::FloatRect(0.f, 0.f, 816.f, 816.f));
-				m_window.setSize(sf::Vector2u(816, 816));
+				view.setViewport(sf::FloatRect(0.f, 0.f, 816, 864));
+				m_window.setSize(sf::Vector2u(864, 864));
 				m_window.setPosition(sf::Vector2i(400, 200));
 			}
 			else
@@ -171,10 +303,14 @@ void PlayState::Update()
 			switch (event.key.code)
 			{
 			case sf::Keyboard::P:
-				m_next = StateMachine::Build<MenuState>(m_machine, m_window, false);
+				if (pressed == false)
+				{
+					pressed = true;
+					m_next = StateMachine::Build<MenuState>(m_machine, m_window, false);	
+				}
 				break;
 			case sf::Keyboard::Space:
-				m_map.GenerateBombs(m_player.GetPlayerShape().getPosition(), bombRadius, m_clock.GetElapsedTime().asSeconds(), m_player.GetMaxNoBombs());
+				m_map.GenerateBombs(m_player.GetPlayerShape().getPosition(), m_player.GetRadiusStatus(), m_clock.GetElapsedTime().asSeconds(), m_player.GetMaxNoBombs());
 			default:
 				break;
 			}
@@ -190,79 +326,57 @@ void PlayState::Draw()
 {
 	m_window.clear();
 
+	float elapsedTime = m_clock.GetElapsedTime().asSeconds();
+
 	m_window.draw(m_map);
-	m_map.SetElapsedTime(m_clock.GetElapsedTime().asSeconds());
+	m_map.SetElapsedTime(elapsedTime);
+	m_bar->SetElapsedTime(elapsedTime);
+	m_bar->CalculateAndCheck();
 
-
-	//if (m_player.GetCanPlaceBomb() && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space))
-	//{
-	///*	m_bomb = new Bomb(m_map.GetBlock(static_cast<uint16_t>(round(m_player.GetPositionX() / 48))).GetPosition().x,
-	//		m_map.GetBlock(static_cast<uint16_t>(round(m_player.GetPositionY() / 48))).GetPosition().x,
-	//		bombRadius, m_clock.GetElapsedTime().asSeconds());
-	//	m_window.draw(m_bomb->GetBombShape());*/
-	//	m_map.GenerateBombs(m_player.GetPlayerShape().getPosition(), bombRadius, m_clock.GetElapsedTime().asSeconds(),m_player.GetMaxNoBombs());
-	//}
+	m_bar->SetScoreText(1);
 
 	if (m_map.GetNoBombsDisplayed() == m_player.GetMaxNoBombs())
 		m_player.SetCanPlaceBomb(false);
 
-	if (!m_map.m_bombsQueue.empty() && m_map.m_bombsQueue.front()->GetBombStatus() == true)
-	{
-		DrawExplosion(m_map.m_bombsQueue.front());
-		m_player.SetCanPlaceBomb(true);
-	}
-	//else if (m_player.GetCanPlaceBomb() == false)
-	//{
-	//	if (!m_bomb->GetBombStatus() && m_bomb->GetExplosionRadius() != 0)
-	//	{
-	//		m_window.draw(m_bomb->GetBombShape());
-	//		m_bomb->Update(m_clock.GetElapsedTime().asSeconds());
-	//	}
-	//	else
-	//	{
-	//		if (m_bomb->GetExplosionShow() == false)
-	//		{
-	//			m_explosion = new Explosion(m_bomb->GetBombShape().getPosition(), m_bomb->GetExplosionRadius(), &m_map);
-	//			m_explosion->Update(m_clock.GetElapsedTime().asSeconds(), m_window);
-	//			m_bomb->SetExplosionShow(true);
-	//		}
-	//		else
-	//		{
-	//			m_explosion->Update(m_clock.GetElapsedTime().asSeconds(), m_window);
-	//			m_bomb->SetExplosionShow(m_explosion->GetExplosionState());
+	CreateExplosions();
 
-	//			if (m_bomb->GetExplosionShow() == false)
-	//			{
-	//				//ChangeBlocks();
-	//				m_player.SetCanPlaceBomb(true);
-	//				delete m_explosion;
-	//				delete m_bomb;
-	//			}
-	//		}
-	//	}
-	//}
-	m_window.draw(m_player.GetPlayerShape());
-	m_player.MovePlayer(m_clock.GetElapsedTime().asSeconds());
-	CheckForCollision();
+	IsPlayerOnFireBlock();
+	if (IsTimeZero() || m_wasPlayerOnFire == true)
+	{
+		m_player.DeadAnimation(m_clock.GetElapsedTime().asSeconds());
+		m_window.draw(m_player.GetPlayerShape());
+		if (m_player.GetIsDead() == true)
+		{
+			LevelState::m_currentLevel--;
+			m_next = StateMachine::Build<LevelState>(m_machine, m_window, false);
+		}
+	}
+	else
+	{
+		m_window.draw(m_player.GetPlayerShape());
+		m_player.MovePlayer(elapsedTime);
+		CheckForCollision();
+	}
 
 	if (IsPlayerOnPowerUp() == true) {
+		StatusUpdate(m_map.GetPower()->GetPowerType());
 		m_map.RemovePowerUp();
 		m_map.ClearBlock(m_player.GetPlayerShape().getPosition());
 		std::cout << "sters" << "\n";
 	}
-
-
-	// MODIFICA AICI
+	 //MODIFICA AICI
 
 	if (IsPlayerOnTeleport())
 	{
 		m_next = StateMachine::Build<LevelState>(m_machine, m_window, false);
+		
 	}
 
-	if (Player::GetNumberOfLives() == 0)
+	if (m_player.GetNumberOfLives() == 0)
 	{
 		m_next = StateMachine::Build<GameLostState>(m_machine, m_window, false);
 	}
 
+	m_window.draw(*m_bar);
 	m_window.display();
 }

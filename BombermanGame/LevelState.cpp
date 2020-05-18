@@ -12,6 +12,7 @@ uint16_t LevelState::m_currentLevel = 0;
 LevelState::LevelState(StateMachine& machine, sf::RenderWindow& window, bool replace) :
 	State(machine, window, replace)
 {
+
 	if (m_levels.empty())
 	{
 		{
@@ -31,6 +32,7 @@ LevelState::LevelState(StateMachine& machine, sf::RenderWindow& window, bool rep
 	}
 	else
 	{
+
 		m_bgTexture.loadFromFile("../_external/states/levelstate.png");
 		m_bg.setTexture(m_bgTexture, true);
 
@@ -40,10 +42,13 @@ LevelState::LevelState(StateMachine& machine, sf::RenderWindow& window, bool rep
 		m_text.setCharacterSize(80);
 		m_text.setPosition(200.f, 325.f);
 
-		m_soundBuffer.loadFromFile("../_external/audio/level.flac");
-		m_sound.setBuffer(m_soundBuffer);
-		m_sound.play();
-		m_sound.setLoop(true);
+		m_soundBuffer = new sf::SoundBuffer;
+		m_soundBuffer->loadFromFile("../_external/audio/level.flac");
+
+		m_sound = new sf::Sound;
+		m_sound->setBuffer(*m_soundBuffer);
+
+		m_sound->play();
 
 		std::cout << "LevelState Ctor" << std::endl;
 	}
@@ -67,9 +72,16 @@ void LevelState::Draw()
 	m_window.display();
 }
 
+void LevelState::DeleteMusicBuffer()
+{
+	m_soundBuffer->~SoundBuffer();
+	m_sound->~Sound();
+}
+
 void LevelState::Update()
 {
 	sf::Event event;
+	bool pressed = false;
 
 	while (m_window.pollEvent(event))
 	{
@@ -85,10 +97,10 @@ void LevelState::Update()
 
 			sf::View view = m_window.getDefaultView();
 
-			if (window_width < 816 || window_height < 816)
+			if (window_width < 816 || window_height < 864)
 			{
-				view.setViewport(sf::FloatRect(0.f, 0.f, 816.f, 816.f));
-				m_window.setSize(sf::Vector2u(816, 816));
+				view.setViewport(sf::FloatRect(0.f, 0.f, 864, 864));
+				m_window.setSize(sf::Vector2u(864, 864));
 				m_window.setPosition(sf::Vector2i(400, 200));
 			}
 			else
@@ -118,8 +130,13 @@ void LevelState::Update()
 			switch (event.key.code)
 			{
 			case sf::Keyboard::C:
-				m_next = StateMachine::Build<PlayState>(m_machine, m_window, true);
-				m_currentLevel++;
+				if (pressed == false)
+				{
+					pressed = true;
+					DeleteMusicBuffer();
+					m_next = StateMachine::Build<PlayState>(m_machine, m_window, true);
+					m_currentLevel++;
+				}
 				break;
 
 			default:

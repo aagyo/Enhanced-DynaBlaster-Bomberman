@@ -16,9 +16,11 @@ public:
 	void Update() override;
 	void Draw() override;
 
+	void DeleteMusicBuffer();
+
 private:
 	sf::Texture m_bgTexture;
 	sf::Sprite m_bg;
-	sf::Sound m_sound;
-	sf::SoundBuffer m_soundBuffer;
+	sf::Sound* m_sound;
+	sf::SoundBuffer* m_soundBuffer;
 };

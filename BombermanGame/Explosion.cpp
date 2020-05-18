@@ -68,7 +68,9 @@ void Explosion::Update(float deltaTime, sf::RenderWindow& window)
 				m_explosionShape.setTextureRect(it);
 				Draw(window);
 				if (m_fireBlockMark == false)
+				{
 					m_map->ExplosionMarker(upCopy[0]);
+				}
 				upCopy.erase(upCopy.begin());
 			}
 			else if (!downCopy.empty())
@@ -100,17 +102,24 @@ void Explosion::Update(float deltaTime, sf::RenderWindow& window)
 			}
 		}
 		if (upCopy.empty() && downCopy.empty() && leftCopy.empty() && rightCopy.empty())
+		{
+			m_map->ExplosionMarker(m_center);
 			m_fireBlockMark = true;
+		}
 	}
-	
+
 	m_animationComponents.animation.UpdateExplosion(deltaTime, m_animationComponents.frameDuration);
 	m_currentState = m_animationComponents.animation.GetCurrentExplosionFrame();
 
+	//if (m_currentState == 2)
+	//{
+	//}
 	if (m_currentState >= 4)
 	{
-		for (auto& iterator : m_emptyBlocksLocation)
-			m_map->ClearBlock(iterator);
 		m_explosionNotFinished = false;
+		/*m_map->ClearBlock(m_center);
+		for (auto& iterator : m_emptyBlocksLocation)
+			m_map->ClearBlock(iterator);*/
 	}
 
 }
@@ -147,8 +156,10 @@ void Explosion::PlaceExplosion()
 			{
 				stoneBlockLeft = true;
 			}
-			else
+			else if (m_map->GetBlock(IndexBomba - index).GetBlockType() != EBlockType::PortalBlock)
+			{
 				m_emptyBlocksLocation.push_back(m_map->GetBlock(IndexBomba - index).GetPosition());
+			}
 			m_posFrequency[0]++;
 			m_blockOnDir.left.push_back(m_map->GetBlock(IndexBomba - index).GetPosition());
 		}
@@ -162,8 +173,10 @@ void Explosion::PlaceExplosion()
 			{
 				stoneBlockRight = true;
 			}
-			else
+			else if (m_map->GetBlock(IndexBomba + index).GetBlockType() != EBlockType::PortalBlock)
+			{
 				m_emptyBlocksLocation.push_back(m_map->GetBlock(IndexBomba + index).GetPosition());
+			}
 			m_posFrequency[1]++;
 			m_blockOnDir.right.push_back(m_map->GetBlock(IndexBomba + index).GetPosition());
 		}
@@ -181,8 +194,10 @@ void Explosion::PlaceExplosion()
 			{
 				stoneBlockUp = true;
 			}
-			else
+			else if (m_map->GetBlock(IndexBomba - index).GetBlockType() != EBlockType::PortalBlock)
+			{
 				m_emptyBlocksLocation.push_back(m_map->GetBlock(IndexBomba - index).GetPosition());
+			}
 			m_posFrequency[2]++;
 			m_blockOnDir.up.push_back(m_map->GetBlock(IndexBomba - index).GetPosition());
 		}
@@ -196,13 +211,16 @@ void Explosion::PlaceExplosion()
 			{
 				stoneBlockDown = true;
 			}
-			else
+			else if (m_map->GetBlock(IndexBomba + index).GetBlockType() != EBlockType::PortalBlock)
+			{
 				m_emptyBlocksLocation.push_back(m_map->GetBlock(IndexBomba + index).GetPosition());
+			}
 			m_posFrequency[3]++;
 			m_blockOnDir.down.push_back(m_map->GetBlock(IndexBomba + index).GetPosition());
 		}
 		else flagDown = true;
 	}
+	//m_emptyBlocksLocation.insert(m_emptyBlocksLocation.begin(), m_center);
 
 	m_animationComponents.animation = Animation(m_direction.firstState, m_numberOfFrames);
 	m_animationComponents.frameDuration = 0.5f / m_numberOfFrames;

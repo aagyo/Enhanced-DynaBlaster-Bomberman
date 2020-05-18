@@ -16,11 +16,13 @@ public:
 
 public:
 	sf::IntRect GetFrame() const;
+	uint16_t GetCurrentFrame() const;
 	uint16_t GetNumberOfFrames() const;
 	float GetTimeOfLastUpdate() const;
 	uint16_t GetCurrentExplosionFrame() const;
 	void SetFirstFrame(sf::IntRect& frame);
 	void SetFrame(sf::IntRect& frame);
+	void SetNumberOfFrames(uint16_t numberOfFrames);
 
 private:
 	sf::IntRect m_firstFrame;

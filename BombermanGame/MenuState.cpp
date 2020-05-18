@@ -12,20 +12,34 @@ MenuState::MenuState(StateMachine& machine, sf::RenderWindow& window, bool repla
 	m_bgTexture.loadFromFile("../_external/states/menustate.png");
 	m_bg.setTexture(m_bgTexture, true);
 
-	m_soundBuffer.loadFromFile("../_external/audio/menu.flac");
-	m_sound.setBuffer(m_soundBuffer);
-	m_sound.play();
-	m_sound.setLoop(true);
+	m_soundBuffer = new sf::SoundBuffer;
+	m_soundBuffer->loadFromFile("../_external/audio/menu.flac");
+
+	m_sound = new sf::Sound;
+	m_sound->setBuffer(*m_soundBuffer);
+
+	m_sound->play();
+
 
 	std::cout << "MenuState Ctor" << std::endl;
 }
 void MenuState::Pause()
 {
+	DeleteMusicBuffer();
 	std::cout << "MenuState Pause" << std::endl;
 }
 
 void MenuState::Resume()
 {
+
+	m_soundBuffer = new sf::SoundBuffer;
+	m_soundBuffer->loadFromFile("../_external/audio/play.flac");
+
+	m_sound = new sf::Sound;
+	m_sound->setBuffer(*m_soundBuffer);
+
+	m_sound->play();
+
 	std::cout << "MenuState Resume" << std::endl;
 }
 
@@ -35,9 +49,16 @@ void MenuState::Draw()
 	m_window.draw(m_bg);
 	m_window.display();
 }
+
+void MenuState::DeleteMusicBuffer()
+{
+	m_sound->~Sound();
+	m_soundBuffer->~SoundBuffer();
+}
 void MenuState::Update()
 {
 	sf::Event event;
+	bool pressed = false;
 
 	while (m_window.pollEvent(event))
 	{
@@ -54,10 +75,10 @@ void MenuState::Update()
 
 			sf::View view = m_window.getDefaultView();
 
-			if (window_width < 816 || window_height < 816)
+			if (window_width < 816 || window_height < 864)
 			{
-				view.setViewport(sf::FloatRect(0.f, 0.f, 816.f, 816.f));
-				m_window.setSize(sf::Vector2u(816, 816));
+				view.setViewport(sf::FloatRect(0.f, 0.f, 816, 864));
+				m_window.setSize(sf::Vector2u(864, 864));
 				m_window.setPosition(sf::Vector2i(400, 200));
 			}
 			else
@@ -82,14 +103,16 @@ void MenuState::Update()
 			m_machine.Quit();
 			break;
 
-		case sf::Event::KeyPressed:
+		case sf::Event::KeyReleased:
 			switch (event.key.code)
 			{
 			case sf::Keyboard::C:
+				DeleteMusicBuffer();
 				m_machine.LastState();
 				break;
 
 			case sf::Keyboard::I:
+				DeleteMusicBuffer();
 				m_next = StateMachine::Build<IntroState>(m_machine, m_window, true);
 				LevelState::m_currentLevel = 0;
 				break;

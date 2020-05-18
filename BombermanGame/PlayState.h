@@ -6,6 +6,7 @@
 #include "GameClock.h"
 #include "Bomb.h"
 #include "Explosion.h"
+#include "GameBar.h"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
@@ -24,23 +25,34 @@ public:
 public:
 	void CreateMap();
 	void CheckForCollision();
+	void StatusUpdate(const PowerType& powerUp);
 
-public:
+private:
 	bool IsPlayerOnTeleport();
 	bool IsPlayerOnPowerUp();
+	bool IsTimeZero();
+	void IsPlayerOnFireBlock();
+	
 
 public:
 	sf::Time GetElapsedTime() const;
 
 private:
-	void DrawExplosion(Bomb* thisBomb);
+	void CreateExplosions();
+	void DrawExplosion(Bomb* thisBomb, uint16_t thisIndex);
+	void InsertExplosion(Bomb *thisBomb);
+
+private:
+	void DeleteMusicBuffer();
 
 private:
 	Map m_map;
-	Explosion *m_explosion;
+	std::vector<Explosion*> m_explosionsList;
 	Player m_player;
-	const uint16_t bombRadius = 2;
 	GameClock m_clock;
-	sf::Sound m_sound;
-	sf::SoundBuffer m_soundBuffer;
+	bool m_wasPlayerOnFire = false;
+	GameBar* m_bar;
+	sf::Sound* m_sound;
+	sf::SoundBuffer* m_soundBuffer;
+
 };

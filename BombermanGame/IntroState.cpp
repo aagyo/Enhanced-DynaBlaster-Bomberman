@@ -9,13 +9,17 @@
 IntroState::IntroState(StateMachine& machine, sf::RenderWindow& window, bool replace)
 	: State(machine, window, replace)
 {
+	window.setKeyRepeatEnabled(false);
 	m_bgTexture.loadFromFile("../_external/states/introstate.png");
 	m_bg.setTexture(m_bgTexture, true);
 
-	m_soundBuffer.loadFromFile("../_external/audio/intro.flac");
-	m_sound.setBuffer(m_soundBuffer);
-	m_sound.play();
-	m_sound.setLoop(true);
+	m_soundBuffer = new sf::SoundBuffer;
+	m_soundBuffer->loadFromFile("../_external/audio/intro.flac");
+
+	m_sound = new sf::Sound;
+	m_sound->setBuffer(*m_soundBuffer);
+
+	m_sound->play();
 
 	std::cout << "IntroState Ctor" << std::endl;
 }
@@ -23,6 +27,7 @@ IntroState::IntroState(StateMachine& machine, sf::RenderWindow& window, bool rep
 void IntroState::Update()
 {
 	sf::Event event;
+	bool pressed = false;
 
 	while (m_window.pollEvent(event))
 	{
@@ -38,10 +43,10 @@ void IntroState::Update()
 
 			sf::View view = m_window.getDefaultView();
 
-			if (window_width < 816 || window_height < 816)
+			if (window_width < 816 || window_height < 864)
 			{
-				view.setViewport(sf::FloatRect(0.f, 0.f, 816.f, 816.f));
-				m_window.setSize(sf::Vector2u(816, 816));
+				view.setViewport(sf::FloatRect(0.f, 0.f, 816, 864));
+				m_window.setSize(sf::Vector2u(864, 864));
 				m_window.setPosition(sf::Vector2i(400, 200));
 			}
 			else
@@ -71,8 +76,15 @@ void IntroState::Update()
 			switch (event.key.code)
 			{
 			case sf::Keyboard::Enter:
-				m_next = StateMachine::Build<LevelState>(m_machine, m_window, true);
+				if (pressed == false) {
+
+					pressed = true;
+					DeleteMusicBuffer();
+					m_next = StateMachine::Build<LevelState>(m_machine, m_window, true);
+
+				}
 				break;
+
 
 			case sf::Keyboard::Escape:
 				m_machine.Quit();
@@ -105,4 +117,10 @@ void IntroState::Draw()
 	m_window.clear();
 	m_window.draw(m_bg);
 	m_window.display();
+}
+
+void IntroState::DeleteMusicBuffer()
+{
+	m_sound->~Sound();
+	m_soundBuffer->~SoundBuffer();
 }

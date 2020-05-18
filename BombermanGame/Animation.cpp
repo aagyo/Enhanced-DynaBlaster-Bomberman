@@ -67,7 +67,7 @@ std::vector<sf::IntRect> Animation::GetExplosionsFrames(std::array<int, 4>& freq
 	{
 		m_frame = m_firstFrame;
 		m_frame.left = m_firstFrame.left + 3 * m_frame.width;
-		explosionFrames.at(frequency[2] - 1) = m_frame;
+ 		explosionFrames.at(frequency[2] - 1) = m_frame;
 	}
 	if (frequency[3] - radius == 0)
 	{
@@ -96,6 +96,11 @@ sf::IntRect Animation::GetFrame() const
 	return m_frame;
 }
 
+uint16_t Animation::GetCurrentFrame() const
+{
+	return m_currentFrame;
+}
+
 uint16_t Animation::GetNumberOfFrames() const
 {
 	return m_numberOfFrames;
@@ -119,4 +124,9 @@ void Animation::SetFirstFrame(sf::IntRect& frame)
 void Animation::SetFrame(sf::IntRect& frame)
 {
 	m_frame = frame;
+}
+
+void Animation::SetNumberOfFrames(uint16_t numberOfFrames)
+{
+	m_numberOfFrames = numberOfFrames;
 }

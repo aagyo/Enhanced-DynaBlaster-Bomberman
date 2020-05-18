@@ -148,6 +148,7 @@
     <ClInclude Include="Chronometer.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Explosion.h" />
+    <ClInclude Include="GameBar.h" />
     <ClInclude Include="GameClock.h" />
     <ClInclude Include="GameLostState.h" />
     <ClInclude Include="GameOverState.h" />
@@ -171,6 +172,7 @@
     <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Explosion.cpp" />
+    <ClCompile Include="GameBar.cpp" />
     <ClCompile Include="GameClock.cpp" />
     <ClCompile Include="GameLostState.cpp" />
     <ClCompile Include="GameOverState.cpp" />

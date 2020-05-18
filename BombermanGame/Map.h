@@ -23,6 +23,7 @@ public:
 public:
 	void CreateTilesOnMap(const sf::Vector2u& tileSize);
 	Block& GetBlock(uint16_t position);
+	PowerUp* GetPower();
 
 public:
 	static const uint16_t GetWidth();
@@ -33,8 +34,12 @@ public:
 	void ExplosionMarker(const sf::Vector2f& position);
 	void RemovePowerUp();
 	void ClearBlock(const sf::Vector2f& position);
-	void GenerateBombs(const sf::Vector2f& playersPosition,const uint16_t& bombRadius,const float& timeElapsed, const uint16_t& maxNoBombs);
+	void IsPortal(Block& block);
+
+	void GenerateBombs(const sf::Vector2f& playersPosition, const uint16_t& bombRadius, const float& timeElapsed, const uint16_t& maxNoBombs);
 	uint16_t GetNoBombsDisplayed() const;
+	void EarlyExplode(Bomb* bomb);
+	void ClearFireBlocks();
 
 private:
 	void GenerateMapLayout();
@@ -42,25 +47,25 @@ private:
 	void GenerateRandomTeleport();
 	void GenerateRandomPowerUp(const sf::Vector2f& position);
 
+	bool CheckBombsPositions(sf::Vector2f playerPosition);
+
 private:
 	void draw(sf::RenderTarget& target, sf::RenderStates states)const override;
 
 public:
-	std::vector<Bomb*> m_bombsQueue;
+	std::vector<Bomb*> m_bombsList;
 
 private:
 	sf::VertexArray m_vertices;
 	sf::Texture m_tileset;
 	sf::Texture m_barTexture;
-	sf::Sprite m_bar;
-	sf::Font m_font;
-	sf::Text m_text;
 
 	static const uint16_t m_mapWidth = 17;
 	static const uint16_t m_mapHeight = 17;
 
 	float m_elapsedTime;
 	Portal* m_portal;
+	std::vector<uint16_t> fireBlocks;
 
 	sf::Vector2f lastPlayerPos;
 

@@ -132,6 +132,9 @@
     <ClInclude Include="GameLostState.h">
       <Filter>Header Files\GUIEngine</Filter>
     </ClInclude>
+    <ClInclude Include="GameBar.h">
+      <Filter>Header Files\GameComponents</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp">
@@ -199,6 +202,9 @@
     </ClCompile>
     <ClCompile Include="GameLostState.cpp">
       <Filter>Source Files\GUIEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="GameBar.cpp">
+      <Filter>Source Files\GameComponents</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

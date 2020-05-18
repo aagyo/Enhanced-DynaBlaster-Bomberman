@@ -18,15 +18,16 @@ public:
 
 public:
 	static uint16_t m_currentLevel;
+	void DeleteMusicBuffer();
 
 private:
 	sf::Texture m_bgTexture;
 	sf::Sprite m_bg;
 	sf::Text m_text;
 	sf::Font m_font;
-	sf::Sound m_sound;
-	sf::SoundBuffer m_soundBuffer;
-	
+	sf::SoundBuffer* m_soundBuffer;
+	sf::Sound* m_sound;
+
 private:
 	std::vector<std::string> m_levels;
 };

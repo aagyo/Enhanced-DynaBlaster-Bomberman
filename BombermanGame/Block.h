@@ -19,6 +19,7 @@ public:
 	sf::RectangleShape GetBlockBody() const;
 	Collider GetCollider();
 	sf::Vector2f GetPosition();
+	bool GetIsPortal() const;
 
 public:
 	void SetBlockType(const EBlockType& blockType);

@@ -25,6 +25,11 @@ sf::Vector2f Block::GetPosition()
 	return m_blockBody.getPosition();
 }
 
+bool Block::GetIsPortal() const
+{
+	return isPortal;
+}
+
 void Block::SetBlockType(const EBlockType& blockType)
 {
 	m_blockType = blockType;
