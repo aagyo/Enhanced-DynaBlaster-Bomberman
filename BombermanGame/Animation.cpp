@@ -1,7 +1,6 @@
 #include "Animation.h"
-#include <array>
 
-Animation::Animation(const sf::IntRect frame, uint16_t numberOfFrames) :
+Animation::Animation(const sf::IntRect& frame, uint16_t numberOfFrames) :
 	m_firstFrame(frame), m_frame(frame), m_numberOfFrames(numberOfFrames)
 {
 	//empty
@@ -12,10 +11,14 @@ void Animation::Update(float currentTime, float animationTime)
 	if (currentTime - m_timeOfLastUpdate >= animationTime)
 	{
 		m_frame.left = m_firstFrame.left + m_currentFrame * m_frame.width;
+		
 		++m_currentFrame;
-		if (m_currentFrame >= m_numberOfFrames) {
+		
+		if (m_currentFrame >= m_numberOfFrames) 
+		{
 			m_currentFrame = 0;
 		}
+		
 		m_timeOfLastUpdate = currentTime;
 	}
 }
@@ -29,63 +32,76 @@ void Animation::UpdateExplosion(float currentTime, float animationTime)
 	}
 }
 
-std::vector<sf::IntRect> Animation::GetExplosionsFrames(std::array<int, 4>& frequency, uint16_t& radius)
+std::vector<sf::IntRect> Animation::GetExplosionsFrames(const std::array<uint16_t, 4>& animationFrameFrequency, uint16_t radius)
 {
-	std::vector<sf::IntRect> explosionFrames;
-	int fu = frequency[2], fd = frequency[3], fr = frequency[1], fl = frequency[0];
-	while ((fu + fd + fl + fr) != 0)
+	const uint16_t firstFramePos = 0;
+	const uint16_t secondFramePos = 1;
+	const uint16_t thirdFramePos = 2;
+	const uint16_t fourthFramePos = 3;
+	const uint16_t fifthFramePos = 4;
+	const uint16_t sixthFramePos = 5;
+	const uint16_t seventhFramePos = 6;
+	
+	std::vector<sf::IntRect> explosionFrames;	
+	uint16_t frameUp = animationFrameFrequency[thirdFramePos], frameDown = animationFrameFrequency[fourthFramePos], frameRight = animationFrameFrequency[secondFramePos], frameLeft = animationFrameFrequency[firstFramePos];
+	
+	while ((frameUp + frameDown + frameLeft + frameRight) != 0)
 	{
-		if (fu != 0)
+		if (frameUp != 0)
 		{
-			m_frame.left = m_firstFrame.left + 1 * m_frame.width;
+			m_frame.left = m_firstFrame.left + secondFramePos * m_frame.width;
 			explosionFrames.push_back(m_frame);
-			fu--;
+			frameUp--;
 		}
 
-		else if (fu == 0 && fd != 0)
+		else if (frameUp == 0 && frameDown != 0)
 		{
-			m_frame.left = m_firstFrame.left + 1 * m_frame.width;
+			m_frame.left = m_firstFrame.left + secondFramePos * m_frame.width;
 			explosionFrames.push_back(m_frame);
-			fd--;
+			frameDown--;
 		}
 
-		else if (fd == 0 && fr != 0)
+		else if (frameDown == 0 && frameRight != 0)
 		{
-			m_frame.left = m_firstFrame.left + 2 * m_frame.width;
+			m_frame.left = m_firstFrame.left + thirdFramePos * m_frame.width;
 			explosionFrames.push_back(m_frame);
-			fr--;
+			frameRight--;
 		}
 
-		else if (fr == 0 && fl != 0)
+		else if (frameRight == 0 && frameLeft != 0)
 		{
-			m_frame.left = m_firstFrame.left + 2 * m_frame.width;
+			m_frame.left = m_firstFrame.left + thirdFramePos * m_frame.width;
 			explosionFrames.push_back(m_frame);
-			fl--;
+			frameLeft--;
 		}
 	}
-	if (frequency[2] - radius == 0)
+	
+	if (animationFrameFrequency[thirdFramePos] - radius == 0)
 	{
 		m_frame = m_firstFrame;
-		m_frame.left = m_firstFrame.left + 3 * m_frame.width;
- 		explosionFrames.at(frequency[2] - 1) = m_frame;
+		m_frame.left = m_firstFrame.left + fourthFramePos * m_frame.width;
+ 		explosionFrames.at(animationFrameFrequency[thirdFramePos] - 1) = m_frame;
 	}
-	if (frequency[3] - radius == 0)
+	
+	if (animationFrameFrequency[fourthFramePos] - radius == 0)
 	{
 		m_frame = m_firstFrame;
-		m_frame.left = m_firstFrame.left + 4 * m_frame.width;
-		explosionFrames.at(frequency[2] + frequency[3] - 1) = m_frame;
+		m_frame.left = m_firstFrame.left + fifthFramePos * m_frame.width;
+		explosionFrames.at(animationFrameFrequency[thirdFramePos] + animationFrameFrequency[fourthFramePos] - 1) = m_frame;
 	}
-	if (frequency[1] - radius == 0)
+	
+	if (animationFrameFrequency[secondFramePos] - radius == 0)
 	{
 		m_frame = m_firstFrame;
-		m_frame.left = m_firstFrame.left + 5 * m_frame.width;
-		explosionFrames.at(frequency[1] + frequency[2] + frequency[3] - 1) = m_frame;
+		m_frame.left = m_firstFrame.left + sixthFramePos * m_frame.width;
+		explosionFrames.at(animationFrameFrequency[secondFramePos] + animationFrameFrequency[thirdFramePos] + animationFrameFrequency[fourthFramePos] - 1) = m_frame;
 	}
-	if (frequency[0] - radius == 0)
+	
+	if (animationFrameFrequency[firstFramePos] - radius == 0)
 	{
 		m_frame = m_firstFrame;
-		m_frame.left = m_firstFrame.left + 6 * m_frame.width;
-		explosionFrames.at(frequency[0] + frequency[1] + frequency[2] + frequency[3] - 1) = m_frame;
+		m_frame.left = m_firstFrame.left + seventhFramePos * m_frame.width;
+		explosionFrames.at(animationFrameFrequency[firstFramePos] + animationFrameFrequency[secondFramePos] + animationFrameFrequency[thirdFramePos] + animationFrameFrequency[fourthFramePos] - 1) = m_frame;
 	}
 
 	return explosionFrames;

@@ -8,8 +8,9 @@
 #include "Explosion.h"
 #include "GameBar.h"
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Audio/Sound.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
 
 class PlayState : public State
 {
@@ -32,30 +33,33 @@ private:
 	bool IsPlayerOnPowerUp();
 	bool IsTimeZero();
 	void IsPlayerOnFireBlock();
-	bool IsPlayerOnEnemy();
-	
+	bool IsPlayerOnEnemy();	
 
 public:
 	sf::Time GetElapsedTime() const;
 
+public:
+
+	void WriteStatsInFile();
+	void ReadStatsFromFile();
+	void WriteLifeInFile();
+
 private:
 	void CreateExplosions();
-	void DrawExplosion(Bomb* thisBomb, uint16_t thisIndex);
-	void InsertExplosion(Bomb *thisBomb);
-
 	void VerifyEnemyDead(const Enemy* enemy);
+	void InsertExplosion(Bomb* thisBomb);
+	void DrawExplosion(Bomb* thisBomb, uint16_t thisIndex);
 
 private:
 	void DeleteMusicBuffer();
 
 private:
 	Map m_map;
-	std::vector<Explosion*> m_explosionsList;
 	Player m_player;
 	GameClock m_clock;
-	bool m_wasPlayerOnFire = false;
 	GameBar* m_bar;
 	sf::Sound* m_sound;
 	sf::SoundBuffer* m_soundBuffer;
-
+	std::vector<Explosion*> m_explosionsList;
+	bool m_wasPlayerOnFire = false;
 };

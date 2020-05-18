@@ -3,13 +3,12 @@
 Enemy::Enemy() : m_lastTimeMoving(0)
 {
 	m_texture.loadFromFile("../_external/sprites/enemy.png");
-	m_enemyShape.setSize(sf::Vector2f(48, 48.f));
+	m_enemyShape.setSize(sf::Vector2f(m_tileSize, m_tileSize));
 	m_enemyShape.setTexture(&m_texture);
-	m_enemyShape.setTextureRect(sf::IntRect(0, 0, 48, 48));
+	m_enemyShape.setTextureRect(sf::IntRect(0, 0, static_cast<int>(m_tileSize), static_cast<int>(m_tileSize)));
 	m_animationComponents.animation = Animation(sf::IntRect(0, 0, 48, 48), m_numberOfFrames);
 	m_animationComponents.frameDuration = m_animationDuration / m_numberOfFrames;
 }
-
 
 Collider Enemy::GetCollider()
 {
@@ -36,7 +35,6 @@ float Enemy::GetLastTimeMoving() const
 	return m_lastTimeMoving;
 }
 
-
 void Enemy::SetLastTimeMoving(float elapsedTime)
 {
 	m_lastTimeMoving = elapsedTime;
@@ -45,12 +43,6 @@ void Enemy::SetLastTimeMoving(float elapsedTime)
 void Enemy::SetPosition(const sf::Vector2f& position)
 {
 	m_enemyShape.setPosition(position);
-}
-
-void Enemy::UpdateAnimation(const float elapsedTime)
-{
-	m_animationComponents.animation.Update(elapsedTime, m_animationComponents.frameDuration);
-	m_enemyShape.setTextureRect(m_animationComponents.animation.GetFrame());
 }
 
 void Enemy::SetDirection(Direction direction)
@@ -68,9 +60,15 @@ void Enemy::SetLastDirection(Direction direction)
 	m_lastDirection = direction;
 }
 
-bool Enemy::GetWallHitted()
+bool Enemy::GetWallHitted() const
 {
 	return m_wallHitted;
+}
+
+void Enemy::UpdateAnimation(const float elapsedTime)
+{
+	m_animationComponents.animation.Update(elapsedTime, m_animationComponents.frameDuration);
+	m_enemyShape.setTextureRect(m_animationComponents.animation.GetFrame());
 }
 
 void Enemy::SetWallHitted(bool status)
@@ -82,5 +80,3 @@ Direction Enemy::GetDirection()
 {
 	return m_direction;
 }
-
-

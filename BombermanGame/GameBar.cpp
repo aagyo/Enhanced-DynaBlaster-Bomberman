@@ -1,9 +1,8 @@
 #include "GameBar.h"
 #include <string> 
-#include <iostream>
-GameBar::GameBar() : m_timeFinished(false), m_numberOfSecound(180), elapsedTime(0), m_highScore(0)
-{
 
+GameBar::GameBar() : m_timeFinished(false), m_numberOfSecond(180), elapsedTime(0), m_highScore(0)
+{
 	m_barTexture.loadFromFile("../_external/sprites/bar.png");
 	m_barTexture.setSmooth(true);
 	m_bar.setTexture(m_barTexture);
@@ -23,22 +22,18 @@ GameBar::GameBar() : m_timeFinished(false), m_numberOfSecound(180), elapsedTime(
 	m_timeText.setFont(m_font);
 	m_timeText.setCharacterSize(25);
 	m_timeText.setPosition(440.f, 820.f);
-
 }
-
 
 void GameBar::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
 	states.transform *= getTransform();
-
 	target.draw(m_bar);
 	target.draw(m_lifeText);
 	target.draw(m_scoreText);
 	target.draw(m_timeText);
-
 }
 
-void GameBar::SetScoreText(uint16_t score)
+void GameBar::SetScoreText(int score)
 {
 	m_highScore += score;
 	m_scoreText.setString(std::to_string(m_highScore));
@@ -59,41 +54,47 @@ void GameBar::SetElapsedTime(float time)
 	elapsedTime = time;
 }
 
-void GameBar::SetAddTime(uint8_t seconds)
+void GameBar::SetAddTime(uint16_t seconds)
 {
-	m_numberOfSecound += seconds;
+	m_numberOfSecond += seconds;
 }
-
 
 void GameBar::CalculateAndCheck()
 {
-	uint16_t numberOfSeconds = m_numberOfSecound;
+	uint16_t numberOfSeconds = m_numberOfSecond;
+	const uint16_t minute = 60;
 
-	if (m_timeFinished != true) {
-
-		numberOfSeconds -= static_cast<uint8_t>(elapsedTime);
+	if (m_timeFinished != true) 
+	{
+		numberOfSeconds -= static_cast<uint16_t>(elapsedTime);
 
 		if (numberOfSeconds == 0)
 		{
 			m_timeFinished = true;
-
 		}
 
-		if (numberOfSeconds % 60 < 10)
+		if (numberOfSeconds % minute < 10)
 		{
-			m_timeText.setString(std::to_string(numberOfSeconds / 60) + ":0" + std::to_string(numberOfSeconds % 60));
+			m_timeText.setString(std::to_string(numberOfSeconds / minute) + ":0" + std::to_string(numberOfSeconds % minute));
 		}
 		else
 		{
-			m_timeText.setString(std::to_string(numberOfSeconds / 60) + ":" + std::to_string(numberOfSeconds % 60));
+			m_timeText.setString(std::to_string(numberOfSeconds / minute) + ":" + std::to_string(numberOfSeconds % minute));
 		}
-		numberOfSeconds = 70;
-
 	}
-
 }
 
-bool GameBar::GetTimeFinished()
+void GameBar::SetHighScore(int highscore)
+{
+	m_highScore = highscore;
+}
+
+int GameBar::GetHighScore()
+{
+	return m_highScore;
+}
+
+bool GameBar::GetTimeFinished() const
 {
 	return m_timeFinished;
 }

@@ -2,9 +2,12 @@
 #include "LevelState.h"
 #include "StateMachine.h"
 
-#include <iostream>
 #include <memory>
-#include <SFML/Graphics.hpp>
+
+#include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/Event.hpp>
+#include <SFML/Graphics/View.hpp>
+#include "Logger.h"
 
 IntroState::IntroState(StateMachine& machine, sf::RenderWindow& window, bool replace)
 	: State(machine, window, replace)
@@ -16,48 +19,47 @@ IntroState::IntroState(StateMachine& machine, sf::RenderWindow& window, bool rep
 	m_soundBuffer = new sf::SoundBuffer;
 	m_soundBuffer->loadFromFile("../_external/audio/intro.flac");
 
+	globalLogger.LogData("Intro State", LogSeverity::info);
 	m_sound = new sf::Sound;
 	m_sound->setBuffer(*m_soundBuffer);
-
 	m_sound->play();
-
-	std::cout << "IntroState Ctor" << std::endl;
 }
 
 void IntroState::Update()
 {
 	sf::Event event;
+	
 	bool pressed = false;
 
 	while (m_window.pollEvent(event))
 	{
 		if (event.type == sf::Event::Resized)
 		{
-			auto window_width = event.size.width;
-			auto window_height = event.size.height;
+			const auto windowWidth = static_cast<float>(event.size.width);
+			const auto windowHeight = static_cast<float>(event.size.height);
 
-			float new_width = window_height;
-			float new_height = window_width;
-			float offset_width = (window_width - new_width) / 2.0;
-			float offset_height = (window_height - new_height) / 2.0;
+			const float newWidth = windowHeight;
+			const float newHeight = windowWidth;
+			const float offset_width = (windowWidth - newWidth) / 2.0f;
+			const float offset_height = (windowHeight - newHeight) / 2.0f;
 
 			sf::View view = m_window.getDefaultView();
 
-			if (window_width < 816 || window_height < 864)
+			if (windowWidth < m_windowSize || windowHeight < m_windowSize)
 			{
-				view.setViewport(sf::FloatRect(0.f, 0.f, 816, 864));
-				m_window.setSize(sf::Vector2u(864, 864));
+				view.setViewport(sf::FloatRect(0.f, 0.f, m_windowSize, m_windowSize));
+				m_window.setSize(sf::Vector2u(static_cast<uint16_t>(m_windowSize), static_cast<uint16_t>(m_windowSize)));
 				m_window.setPosition(sf::Vector2i(400, 200));
 			}
 			else
 			{
-				if (window_width >= window_height)
+				if (windowWidth >= windowHeight)
 				{
-					view.setViewport(sf::FloatRect(offset_width / window_width, 0.0, new_width / window_width, 1.0));
+					view.setViewport(sf::FloatRect(offset_width / windowWidth, 0.0, newWidth / windowWidth, 1.0));
 				}
 				else
 				{
-					view.setViewport(sf::FloatRect(0.0, offset_height / window_height, 1.0, new_height / window_height));
+					view.setViewport(sf::FloatRect(0.0, offset_height / windowHeight, 1.0, newHeight / windowHeight));
 				}
 
 			}
@@ -76,17 +78,16 @@ void IntroState::Update()
 			switch (event.key.code)
 			{
 			case sf::Keyboard::Enter:
-				if (pressed == false) {
-
+				if (pressed == false) 
+				{
 					pressed = true;
 					DeleteMusicBuffer();
 					m_next = StateMachine::Build<LevelState>(m_machine, m_window, true);
-
 				}
 				break;
 
-
 			case sf::Keyboard::Escape:
+				globalLogger.LogData("**************GAME CLOSED****************");
 				m_machine.Quit();
 				break;
 
@@ -104,12 +105,18 @@ void IntroState::Update()
 
 void IntroState::Pause()
 {
-	std::cout << "IntroState Pause" << std::endl;
+	// empty
 }
 
 void IntroState::Resume()
 {
-	std::cout << "IntroState Resume" << std::endl;
+	// empty
+}
+
+void IntroState::DeleteMusicBuffer()
+{
+	m_sound->~Sound();
+	m_soundBuffer->~SoundBuffer();
 }
 
 void IntroState::Draw()
@@ -117,10 +124,4 @@ void IntroState::Draw()
 	m_window.clear();
 	m_window.draw(m_bg);
 	m_window.display();
-}
-
-void IntroState::DeleteMusicBuffer()
-{
-	m_sound->~Sound();
-	m_soundBuffer->~SoundBuffer();
 }

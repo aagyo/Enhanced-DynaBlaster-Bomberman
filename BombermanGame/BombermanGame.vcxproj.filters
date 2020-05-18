@@ -25,9 +25,6 @@
     <Filter Include="Source Files\Block">
       <UniqueIdentifier>{048211da-165d-46ca-9b51-16d62160a0f8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Collider">
-      <UniqueIdentifier>{3866cc19-c357-4110-b5d0-7a71e840f1d6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Collider">
       <UniqueIdentifier>{90595cbc-857a-411c-90f5-e533f27db911}</UniqueIdentifier>
     </Filter>
@@ -57,6 +54,15 @@
     </Filter>
     <Filter Include="Source Files\Application">
       <UniqueIdentifier>{7f98fb2f-333e-4b0e-badc-64e2f5e03335}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Logger">
+      <UniqueIdentifier>{b68ec946-e6b7-4892-9d03-c3abdc7d6e8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Logger">
+      <UniqueIdentifier>{f3317426-77f8-472e-ad16-a22699ebcf54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Collider">
+      <UniqueIdentifier>{3866cc19-c357-4110-b5d0-7a71e840f1d6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -102,9 +108,6 @@
     <ClInclude Include="MenuState.h">
       <Filter>Header Files\GUIEngine</Filter>
     </ClInclude>
-    <ClInclude Include="PlayState.h">
-      <Filter>Header Files\GUIEngine</Filter>
-    </ClInclude>
     <ClInclude Include="Application.h">
       <Filter>Header Files\Application</Filter>
     </ClInclude>
@@ -140,6 +143,12 @@
     </ClInclude>
     <ClInclude Include="EnemyDirection.h">
       <Filter>Header Files\GameComponents</Filter>
+    </ClInclude>
+    <ClInclude Include="Logger.h">
+      <Filter>Header Files\Logger</Filter>
+    </ClInclude>
+    <ClInclude Include="PlayState.h">
+      <Filter>Header Files\GUIEngine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -182,9 +191,6 @@
     <ClCompile Include="MenuState.cpp">
       <Filter>Source Files\GUIEngine</Filter>
     </ClCompile>
-    <ClCompile Include="PlayState.cpp">
-      <Filter>Source Files\GUIEngine</Filter>
-    </ClCompile>
     <ClCompile Include="Application.cpp">
       <Filter>Source Files\Application</Filter>
     </ClCompile>
@@ -214,6 +220,12 @@
     </ClCompile>
     <ClCompile Include="Enemy.cpp">
       <Filter>Source Files\GameComponents</Filter>
+    </ClCompile>
+    <ClCompile Include="Logger.cpp">
+      <Filter>Source Files\Logger</Filter>
+    </ClCompile>
+    <ClCompile Include="PlayState.cpp">
+      <Filter>Source Files\GUIEngine</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

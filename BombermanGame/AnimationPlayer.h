@@ -1,29 +1,24 @@
 #pragma once
-#include "SFML/Graphics.hpp"
+#include "SFML/Graphics/Texture.hpp"
+
 class AnimationPlayer
 {
 public:
+	AnimationPlayer(sf::Texture* texture, const sf::Vector2i& imageCount);
+	~AnimationPlayer() = default;
+	AnimationPlayer(const AnimationPlayer& other) = default;
+	AnimationPlayer(AnimationPlayer&& other) noexcept = default;
+	AnimationPlayer& operator=(const AnimationPlayer& other) = default;
+	AnimationPlayer& operator=(AnimationPlayer&& other) noexcept = default;
 
-	AnimationPlayer() = default;
-	AnimationPlayer(sf::Texture* texture, sf::Vector2u imageCount, float switchTime);
-
-	~AnimationPlayer();
-
-	void Update(int row, float deltaTime, bool faceRight);
-
-private:
-
+public:
+	void Update(uint16_t row, float deltaTime, bool faceRight);
 
 public:
 	sf::IntRect uVRect;
 
 private:
-
-	sf::Vector2u imageCount;
-	sf::Vector2u currentImage;
-
-	float totalTime;
-	float switchTime;
-
+	sf::Vector2i m_imageCount;
+	sf::Vector2i m_currentImage;
+	float m_totalTime;
 };
-

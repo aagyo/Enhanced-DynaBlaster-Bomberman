@@ -1,49 +1,41 @@
 #include "AnimationPlayer.h"
 
-AnimationPlayer::AnimationPlayer(sf::Texture* texture, sf::Vector2u imageCount, float switchTime)
+AnimationPlayer::AnimationPlayer(sf::Texture* texture, const sf::Vector2i& imageCount) :
+	m_imageCount(imageCount)
 {
-	this->imageCount = imageCount;
-	this->totalTime = totalTime;
-	totalTime = 0.f;
-	currentImage.x = 0;
+	m_totalTime = 0;
+	m_currentImage.x = 0;
 
-	uVRect.width = texture->getSize().x / float(imageCount.x);
-	uVRect.height = texture->getSize().y / float(imageCount.y);
+	uVRect.width = static_cast<int>(texture->getSize().x) / imageCount.x;
+	uVRect.height = static_cast<int>(texture->getSize().y) / imageCount.y;
 }
 
-AnimationPlayer::~AnimationPlayer()
+void AnimationPlayer::Update(uint16_t row, float deltaTime, bool faceRight)
 {
-}
+	m_currentImage.y = row;
+	m_totalTime += deltaTime;
 
-void AnimationPlayer::Update(int row, float deltaTime, bool faceRight)
-{
-
-	currentImage.y = row;
-	totalTime += deltaTime;
-
-	if (totalTime >= deltaTime)
+	if (m_totalTime >= deltaTime)
 	{
-		totalTime -= 1;
-		currentImage.x++;
+		m_totalTime -= 1.f;
+		m_currentImage.x++;
 
-		if (currentImage.x >= imageCount.x)
+		if (m_currentImage.x >= m_imageCount.x)
 		{
-			currentImage.x = 0;
-
+			m_currentImage.x = 0;
 		}
 	}
 
-	uVRect.top = currentImage.y * uVRect.height;
+	uVRect.top = m_currentImage.y * uVRect.height;
 
 	if (faceRight)
 	{
-		uVRect.left = currentImage.x * uVRect.width;
+		uVRect.left = m_currentImage.x * uVRect.width;
 		uVRect.width = abs(uVRect.width);
 	}
 	else
 	{
-		uVRect.left = (currentImage.x + 1) * abs(uVRect.width);
+		uVRect.left = (m_currentImage.x + 1) * abs(uVRect.width);
 		uVRect.width = -abs(uVRect.width);
 	}
-
 }

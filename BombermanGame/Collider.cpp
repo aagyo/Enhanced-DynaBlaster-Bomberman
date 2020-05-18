@@ -1,6 +1,7 @@
 #include "Collider.h"
 
-Collider::Collider(sf::RectangleShape& hitBoxBody) : m_objectHitBox(hitBoxBody)
+Collider::Collider(sf::RectangleShape& hitBoxBody) :
+	m_objectHitBox(hitBoxBody)
 {
 	// empty
 }
@@ -22,14 +23,16 @@ void Collider::MoveObject(float dx, float dy)
 
 bool Collider::CheckCollision(Collider& other)
 {
-	sf::Vector2f halfSizeMyObject = GetHalfSize();
-	sf::Vector2f halfSizeOtherObject = other.GetHalfSize();
+	const sf::Vector2f halfSizeMyObject = GetHalfSize();
+	const sf::Vector2f halfSizeOtherObject = other.GetHalfSize();
 
-	float deltaX = other.GetPosition().x - GetPosition().x;
-	float deltaY = other.GetPosition().y - GetPosition().y;
+	const float deltaX = other.GetPosition().x - GetPosition().x;
+	const float deltaY = other.GetPosition().y - GetPosition().y;
 
-	float intersectsX = abs(deltaX) - (halfSizeMyObject.x + halfSizeOtherObject.x);
-	float intersectsY = abs(deltaY) - (halfSizeMyObject.y + halfSizeOtherObject.y);
+	const float intersectsX = abs(deltaX) - (halfSizeMyObject.x + halfSizeOtherObject.x);
+	const float intersectsY = abs(deltaY) - (halfSizeMyObject.y + halfSizeOtherObject.y);
+
+	const float helpPlayerTurn = 1.0f;
 
 	if (intersectsX < 0.0f && intersectsY < 0.0f)
 	{
@@ -46,13 +49,13 @@ bool Collider::CheckCollision(Collider& other)
 				other.MoveObject(intersectsX, 0.0f);
 			}
 
-			if (deltaY < 0.f)
+			if (deltaY < 0.0f)
 			{
-				other.MoveObject(0.0f, -1.0f);
+				other.MoveObject(0.0f, -helpPlayerTurn);
 			}
 			else
 			{
-				other.MoveObject(0.0f, 1.0f);
+				other.MoveObject(0.0f, helpPlayerTurn);
 			}
 		}
 		else
@@ -68,13 +71,13 @@ bool Collider::CheckCollision(Collider& other)
 				other.MoveObject(0.0f, intersectsY);
 			}
 
-			if (deltaX < 0.f)
+			if (deltaX < 0.0f)
 			{
-				other.MoveObject(-1.0, -0.0f);
+				other.MoveObject(-helpPlayerTurn, -0.0f);
 			}
 			else
 			{
-				other.MoveObject(1.0f, 0.0f);
+				other.MoveObject(helpPlayerTurn, 0.0f);
 			}
 		}
 	}

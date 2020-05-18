@@ -1,9 +1,11 @@
 #pragma once
 #include "State.h"
-#include "StateMachine.h"
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Audio/Sound.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
 
 class IntroState : public State
 {
@@ -17,7 +19,6 @@ public:
 	void Draw() override;
 
 private:
-
 	void DeleteMusicBuffer();
 
 private:

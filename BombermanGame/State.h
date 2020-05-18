@@ -31,4 +31,5 @@ protected:
 	sf::RenderWindow& m_window;
 	bool m_replacing;
 	std::unique_ptr<State> m_next;
+	const float m_windowSize = 816.f;
 };

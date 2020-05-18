@@ -1,22 +1,22 @@
 #include "Explosion.h"
-#include <array>
 
-
-Explosion::Explosion(const sf::Vector2f& bombPosition, const uint16_t& radius, Map* map)
-	:m_explosionShape(sf::Vector2f(48, 48)), m_center(bombPosition), m_radius(radius), m_map(map)
+Explosion::Explosion(const sf::Vector2f& bombPosition, const uint16_t radius, Map* map) :
+	m_explosionShape(sf::Vector2f(m_tileSize, m_tileSize)), m_center(bombPosition), m_radius(radius), m_map(map)
 {
-	m_explosionTexture.loadFromFile("../_external/sprites/explosionn.png");
+	m_explosionTexture.loadFromFile("../_external/sprites/explosion.png");
 	m_explosionTexture.setSmooth(true);
 	m_explosionShape.setTexture(&m_explosionTexture);
 	m_posFrequency.fill(0);
 
-	m_direction.firstState = sf::IntRect(0, 144, 48, 48);
-	m_direction.secondState = sf::IntRect(0, 96, 48, 48);
-	m_direction.thirdState = sf::IntRect(0, 48, 48, 48);
-	m_direction.finalState = sf::IntRect(0, 0, 48, 48);
+	m_direction.firstState = sf::IntRect(0, static_cast<int>(m_tileSize) * 3, static_cast<int>(m_tileSize), static_cast<int>(m_tileSize));
+	m_direction.secondState = sf::IntRect(0, static_cast<int>(m_tileSize) * 2, static_cast<int>(m_tileSize), static_cast<int>(m_tileSize));
+	m_direction.thirdState = sf::IntRect(0, static_cast<int>(m_tileSize), static_cast<int>(m_tileSize), static_cast<int>(m_tileSize));
+	m_direction.finalState = sf::IntRect(0, 0, static_cast<int>(m_tileSize), static_cast<int>(m_tileSize));
 
-	if (m_center.x / 48 != 0 && m_center.y / 48 != 0)
+	if (m_center.x / m_tileSize != 0 && m_center.y / m_tileSize != 0)
+	{
 		PlaceExplosion();
+	}
 }
 
 void Explosion::Update(float deltaTime, sf::RenderWindow& window)
@@ -67,10 +67,12 @@ void Explosion::Update(float deltaTime, sf::RenderWindow& window)
 				m_explosionShape.setPosition(upCopy[0]);
 				m_explosionShape.setTextureRect(it);
 				Draw(window);
+
 				if (m_fireBlockMark == false)
 				{
 					m_map->ExplosionMarker(upCopy[0]);
 				}
+
 				upCopy.erase(upCopy.begin());
 			}
 			else if (!downCopy.empty())
@@ -78,8 +80,12 @@ void Explosion::Update(float deltaTime, sf::RenderWindow& window)
 				m_explosionShape.setPosition(downCopy[0]);
 				m_explosionShape.setTextureRect(it);
 				Draw(window);
+
 				if (m_fireBlockMark == false)
+				{
 					m_map->ExplosionMarker(downCopy[0]);
+				}
+
 				downCopy.erase(downCopy.begin());
 			}
 			else if (!rightCopy.empty())
@@ -87,8 +93,12 @@ void Explosion::Update(float deltaTime, sf::RenderWindow& window)
 				m_explosionShape.setPosition(rightCopy[0]);
 				m_explosionShape.setTextureRect(it);
 				Draw(window);
+
 				if (m_fireBlockMark == false)
+				{
 					m_map->ExplosionMarker(rightCopy[0]);
+				}
+
 				rightCopy.erase(rightCopy.begin());
 			}
 			else if (!leftCopy.empty())
@@ -96,8 +106,11 @@ void Explosion::Update(float deltaTime, sf::RenderWindow& window)
 				m_explosionShape.setPosition(leftCopy[0]);
 				m_explosionShape.setTextureRect(it);
 				Draw(window);
+
 				if (m_fireBlockMark == false)
+				{
 					m_map->ExplosionMarker(leftCopy[0]);
+				}
 				leftCopy.erase(leftCopy.begin());
 			}
 		}
@@ -111,17 +124,12 @@ void Explosion::Update(float deltaTime, sf::RenderWindow& window)
 	m_animationComponents.animation.UpdateExplosion(deltaTime, m_animationComponents.frameDuration);
 	m_currentState = m_animationComponents.animation.GetCurrentExplosionFrame();
 
-	//if (m_currentState == 2)
-	//{
-	//}
-	if (m_currentState >= 4)
+	const uint16_t stateFinish = 4;
+	
+	if (m_currentState >= stateFinish)
 	{
 		m_explosionNotFinished = false;
-		/*m_map->ClearBlock(m_center);
-		for (auto& iterator : m_emptyBlocksLocation)
-			m_map->ClearBlock(iterator);*/
 	}
-
 }
 
 void Explosion::Draw(sf::RenderWindow& window)
@@ -129,100 +137,115 @@ void Explosion::Draw(sf::RenderWindow& window)
 	window.draw(m_explosionShape);
 }
 
-sf::RectangleShape Explosion::GetExplosionShape() const
+sf::RectangleShape Explosion::GetExplosionShape()
 {
 	return m_explosionShape;
-
 }
 
-bool Explosion::GetExplosionState() const
+bool Explosion::GetExplosionState()
 {
 	return m_explosionNotFinished;
 }
 
 void Explosion::PlaceExplosion()
 {
-	uint16_t IndexBomba = (m_center.y / 48) * 17 + m_center.x / 48;
+	const uint16_t tileDir = 17;
+	const uint16_t indexBomb = static_cast<uint16_t>((m_center.y / m_tileSize) * static_cast<float>(tileDir) + m_center.x / m_tileSize);
 
 	bool flagLeft = false, flagRight = false;
 	bool stoneBlockLeft = false, stoneBlockRight = false, stoneBlockUp = false, stoneBlockDown = false;
-	for (uint16_t index = 1; index <= m_radius; index++)
+	
+	for (uint16_t indexBlock = 1; indexBlock <= m_radius; indexBlock++)
 	{
-		if (index >= 1 && flagLeft == false && stoneBlockLeft == false &&
-			m_map->GetBlock(IndexBomba - index).GetBlockType() != EBlockType::BorderBlock &&
-			m_map->GetBlock(IndexBomba - index).GetBlockType() != EBlockType::WallBlock)
+		if (indexBlock >= 1 && flagLeft == false && stoneBlockLeft == false &&
+			m_map->GetBlock(indexBomb - indexBlock).GetBlockType() != EBlockType::BorderBlock &&
+			m_map->GetBlock(indexBomb - indexBlock).GetBlockType() != EBlockType::WallBlock)
 		{
-			if (m_map->GetBlock(IndexBomba - index).GetBlockType() == EBlockType::StoneBlock)
+			if (m_map->GetBlock(indexBomb - indexBlock).GetBlockType() == EBlockType::StoneBlock)
 			{
 				stoneBlockLeft = true;
 			}
-			else if (m_map->GetBlock(IndexBomba - index).GetBlockType() != EBlockType::PortalBlock)
+			else if (m_map->GetBlock(indexBomb - indexBlock).GetBlockType() != EBlockType::PortalBlock)
 			{
-				m_emptyBlocksLocation.push_back(m_map->GetBlock(IndexBomba - index).GetPosition());
+				m_emptyBlocksLocation.push_back(m_map->GetBlock(indexBomb - indexBlock).GetPosition());
 			}
-			m_posFrequency[0]++;
-			m_blockOnDir.left.push_back(m_map->GetBlock(IndexBomba - index).GetPosition());
-		}
-		else flagLeft = true;
 
-		if (index >= 1 && flagRight == false && stoneBlockRight == false &&
-			m_map->GetBlock(IndexBomba + index).GetBlockType() != EBlockType::BorderBlock &&
-			m_map->GetBlock(IndexBomba + index).GetBlockType() != EBlockType::WallBlock)
+			m_posFrequency[0]++;
+			m_blockOnDir.left.push_back(m_map->GetBlock(indexBomb - indexBlock).GetPosition());
+		}
+
+		else
 		{
-			if (m_map->GetBlock(IndexBomba + index).GetBlockType() == EBlockType::StoneBlock)
+			flagLeft = true;
+		}
+
+		if (indexBlock >= 1 && flagRight == false && stoneBlockRight == false &&
+			m_map->GetBlock(indexBomb + indexBlock).GetBlockType() != EBlockType::BorderBlock &&
+			m_map->GetBlock(indexBomb + indexBlock).GetBlockType() != EBlockType::WallBlock)
+		{
+			if (m_map->GetBlock(indexBomb + indexBlock).GetBlockType() == EBlockType::StoneBlock)
 			{
 				stoneBlockRight = true;
 			}
-			else if (m_map->GetBlock(IndexBomba + index).GetBlockType() != EBlockType::PortalBlock)
+			else if (m_map->GetBlock(indexBomb + indexBlock).GetBlockType() != EBlockType::PortalBlock)
 			{
-				m_emptyBlocksLocation.push_back(m_map->GetBlock(IndexBomba + index).GetPosition());
+				m_emptyBlocksLocation.push_back(m_map->GetBlock(indexBomb + indexBlock).GetPosition());
 			}
 			m_posFrequency[1]++;
-			m_blockOnDir.right.push_back(m_map->GetBlock(IndexBomba + index).GetPosition());
+			m_blockOnDir.right.push_back(m_map->GetBlock(indexBomb + indexBlock).GetPosition());
 		}
-		else flagRight = true;
+		
+		else
+		{
+			flagRight = true;
+		}
 	}
 
 	bool flagUp = false, flagDown = false;
-	for (uint16_t index = 17; index <= m_radius * 17; index += 17)
+	
+	for (uint16_t indexBlock = tileDir; indexBlock <= m_radius * tileDir; indexBlock += tileDir)
 	{
-		if (IndexBomba > index&& index >= 17 && flagUp == false && stoneBlockUp == false &&
-			m_map->GetBlock(IndexBomba - index).GetBlockType() != EBlockType::WallBlock &&
-			m_map->GetBlock(IndexBomba - index).GetBlockType() != EBlockType::BorderBlock)
+		if (indexBomb > indexBlock&& indexBlock >= tileDir && flagUp == false && stoneBlockUp == false &&
+			m_map->GetBlock(indexBomb - indexBlock).GetBlockType() != EBlockType::WallBlock &&
+			m_map->GetBlock(indexBomb - indexBlock).GetBlockType() != EBlockType::BorderBlock)
 		{
-			if (m_map->GetBlock(IndexBomba - index).GetBlockType() == EBlockType::StoneBlock)
+			if (m_map->GetBlock(indexBomb - indexBlock).GetBlockType() == EBlockType::StoneBlock)
 			{
 				stoneBlockUp = true;
 			}
-			else if (m_map->GetBlock(IndexBomba - index).GetBlockType() != EBlockType::PortalBlock)
+			else if (m_map->GetBlock(indexBomb - indexBlock).GetBlockType() != EBlockType::PortalBlock)
 			{
-				m_emptyBlocksLocation.push_back(m_map->GetBlock(IndexBomba - index).GetPosition());
+				m_emptyBlocksLocation.push_back(m_map->GetBlock(indexBomb - indexBlock).GetPosition());
 			}
 			m_posFrequency[2]++;
-			m_blockOnDir.up.push_back(m_map->GetBlock(IndexBomba - index).GetPosition());
+			m_blockOnDir.up.push_back(m_map->GetBlock(indexBomb - indexBlock).GetPosition());
 		}
-		else flagUp = true;
-
-		if (index >= 17 && flagDown == false && stoneBlockDown == false &&
-			m_map->GetBlock(IndexBomba + index).GetBlockType() != EBlockType::WallBlock &&
-			m_map->GetBlock(IndexBomba + index).GetBlockType() != EBlockType::BorderBlock)
+		else
 		{
-			if (m_map->GetBlock(IndexBomba + index).GetBlockType() == EBlockType::StoneBlock)
+			flagUp = true;
+		}
+
+		if (indexBlock >= tileDir && flagDown == false && stoneBlockDown == false &&
+			m_map->GetBlock(indexBomb + indexBlock).GetBlockType() != EBlockType::WallBlock &&
+			m_map->GetBlock(indexBomb + indexBlock).GetBlockType() != EBlockType::BorderBlock)
+		{
+			if (m_map->GetBlock(indexBomb + indexBlock).GetBlockType() == EBlockType::StoneBlock)
 			{
 				stoneBlockDown = true;
 			}
-			else if (m_map->GetBlock(IndexBomba + index).GetBlockType() != EBlockType::PortalBlock)
+			else if (m_map->GetBlock(indexBomb + indexBlock).GetBlockType() != EBlockType::PortalBlock)
 			{
-				m_emptyBlocksLocation.push_back(m_map->GetBlock(IndexBomba + index).GetPosition());
+				m_emptyBlocksLocation.push_back(m_map->GetBlock(indexBomb + indexBlock).GetPosition());
 			}
 			m_posFrequency[3]++;
-			m_blockOnDir.down.push_back(m_map->GetBlock(IndexBomba + index).GetPosition());
+			m_blockOnDir.down.push_back(m_map->GetBlock(indexBomb + indexBlock).GetPosition());
 		}
-		else flagDown = true;
+		else
+		{
+			flagDown = true;
+		}
 	}
-	//m_emptyBlocksLocation.insert(m_emptyBlocksLocation.begin(), m_center);
-
+	
 	m_animationComponents.animation = Animation(m_direction.firstState, m_numberOfFrames);
-	m_animationComponents.frameDuration = 0.5f / m_numberOfFrames;
-
+	m_animationComponents.frameDuration = 0.5f / static_cast<float>(m_numberOfFrames);
 }

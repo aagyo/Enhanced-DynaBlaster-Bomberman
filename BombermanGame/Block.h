@@ -1,8 +1,9 @@
 #pragma once
-#include <SFML/Graphics.hpp>
 #include "Collider.h"
 #include "BlockType.h"
-#include <iostream>
+
+#include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
 class Block
 {
@@ -11,25 +12,28 @@ public:
 	~Block() = default;
 	Block(const Block& other) = default;
 	Block(Block&& other) noexcept = default;
-	Block& operator=(const Block& other) = default;
-	Block& operator=(Block&& other) noexcept = default;
 
 public:
 	EBlockType GetBlockType() const;
 	sf::RectangleShape GetBlockBody() const;
+	sf::Vector2f GetPosition() const;
 	Collider GetCollider();
-	sf::Vector2f GetPosition();
-	bool GetIsPortal() const;
+
+public:
+	bool IsPortal() const;
 
 public:
 	void SetBlockType(const EBlockType& blockType);
 	void SetPosition(const sf::Vector2f& coordinates);
-	void SetBlockTexture(sf::Texture* texture, sf::IntRect);
+	void SetBlockTexture(sf::Texture* texture, const sf::IntRect& blockTexture);
 	void SetIsPortal(bool state);
+
+protected:
+	const float m_tileSize = 48.f;
+	
 private:
 	sf::RectangleShape m_blockBody;
-	EBlockType m_blockType;
 	const sf::Texture m_blockTexture;
-
+	EBlockType m_blockType;
 	bool isPortal;
 };

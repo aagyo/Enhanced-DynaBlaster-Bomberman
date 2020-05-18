@@ -1,10 +1,16 @@
 #include "StateMachine.h"
+#include "Logger.h"
 
-#include <iostream>
 StateMachine::StateMachine() :
 	m_resumeState(false), m_runningState(false)
 {
-	std::cout << "StateMachine Ctor" << std::endl;
+	if (globalLogger.initialized == false)
+	{
+		globalLogger.InitLogger("globalLogger.txt", LogOutput::everywhere);
+		globalLogger.initialized = true;
+		globalLogger.OpenLogger();
+		globalLogger.LogData("Logger has been initialized", LogSeverity::info);
+	}
 }
 
 void StateMachine::Run(std::unique_ptr<State> state)

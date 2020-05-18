@@ -1,8 +1,8 @@
 #include "PowerUp.h"
-#include <random>
-#include <iostream>
 
-PowerUp::PowerUp(const sf::Vector2f& position) : m_powerUpShape(sf::Vector2f(48.f,48.f))
+#include <random>
+
+PowerUp::PowerUp(const sf::Vector2f& position) : m_powerUpShape(sf::Vector2f(m_tileSize, m_tileSize))
 {
 	m_powerUpShape.setPosition(position);
 	m_powerTexture.loadFromFile("../_external/sprites/powerups.png");
@@ -47,29 +47,27 @@ void PowerUp::CreateRandomPowerUp()
 
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	std::uniform_int_distribution<> powerNumber(4, static_cast<uint16_t>(PowerType::Count) - 1);
+	const std::uniform_int_distribution<> powerNumber(3, static_cast<uint16_t>(PowerType::Count) - 1);
 
 	uint16_t randomNumber = powerNumber(gen);
 
-	std::uniform_int_distribution<> probability(0, static_cast<uint16_t>(1000));
+	const std::uniform_int_distribution<> probability(0, static_cast<uint16_t>(1));
 
-	uint16_t superPowerUpProbability = probability(gen);
+	const uint16_t superPowerUpProbability = probability(gen);
 
-	std::cout << superPowerUpProbability << "\n";
-
-	if (superPowerUpProbability == 1000)
+	if (superPowerUpProbability == 1)
 	{
-		std::uniform_int_distribution<> numberOfSuperPower(1, static_cast<uint16_t>(3));
+		const std::uniform_int_distribution<> numberOfSuperPower(1, static_cast<uint16_t>(3));
 		uint16_t superPowerUp = numberOfSuperPower(gen);
 
 		m_powerType = static_cast<PowerType>(superPowerUp);
-		m_powerUpShape.setTextureRect(sf::IntRect(superPowerUp * 48, 0, 48, 48));
-
-
+		m_powerUpShape.setTextureRect(sf::IntRect((superPowerUp * static_cast<uint16_t>(m_tileSize)), 0, static_cast<uint16_t>(m_tileSize),
+			static_cast<uint16_t>(m_tileSize)));
 	}
 	else 
 	{
 		m_powerType = static_cast<PowerType>(randomNumber);
-		m_powerUpShape.setTextureRect(sf::IntRect(randomNumber * 48, 0, 48, 48));
+		m_powerUpShape.setTextureRect(sf::IntRect(static_cast<uint16_t>(randomNumber * static_cast<uint16_t>(m_tileSize)), 0, static_cast<uint16_t>(m_tileSize),
+			static_cast<uint16_t>(m_tileSize)));
 	}
 }

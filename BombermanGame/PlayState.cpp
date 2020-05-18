@@ -1,13 +1,16 @@
 #include "PlayState.h"
 #include "MenuState.h"
 #include "LevelState.h"
-#include "GameOverState.h"
 #include "GameLostState.h"
 #include "Player.h"
-#include "Gamebar.h"
+#include "GameBar.h"
 
 #include <memory>
-#include <SFML/Graphics.hpp>
+
+#include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/Event.hpp>
+#include <SFML/Graphics/View.hpp>
+#include "Logger.h"
 
 PlayState::PlayState(StateMachine& machine, sf::RenderWindow& window, bool replace) :
 	State(machine, window, replace)
@@ -17,13 +20,81 @@ PlayState::PlayState(StateMachine& machine, sf::RenderWindow& window, bool repla
 
 	m_soundBuffer = new sf::SoundBuffer;
 	m_soundBuffer->loadFromFile("../_external/audio/play.flac");
-
 	m_sound = new sf::Sound;
 	m_sound->setBuffer(*m_soundBuffer);
-
 	m_sound->play();
+	globalLogger.LogData("Playing state", LogSeverity::info);
 
-	std::cout << "PlayState Ctor" << std::endl;
+	ReadStatsFromFile();
+}
+
+void PlayState::WriteStatsInFile() {
+
+
+
+	std::ofstream file("stats.txt");
+
+	if (m_player.GetIsDead() == false) {
+
+		file << m_player.GetNumberOfLives() << "\n";
+		file << m_player.GetMaxNumberOfBombs() << "\n";
+		file << m_player.GetPlayerSpeed() << "\n";
+		file << m_player.GetRadiusStatus() << "\n";
+		file << m_player.GetIsCollision() << "\n";
+
+		file << m_bar->GetHighScore() << "\n";
+	}
+
+	file.close();
+
+}
+
+void PlayState::ReadStatsFromFile() {
+
+	std::ifstream file("stats.txt");
+
+	if (LevelState::m_currentLevel != 0) {
+		std::string lineFromFile;
+
+		file >> lineFromFile;
+		m_player.SetLife(static_cast<uint16_t>(std::stoi(lineFromFile)));
+		m_bar->SetLifeText(static_cast<uint16_t>(std::stoi(lineFromFile)));
+
+		file >> lineFromFile;
+		m_player.SetMaxNumberOfBombs(static_cast<uint16_t>(std::stoi(lineFromFile)));
+
+		file >> lineFromFile;
+		m_player.SetPlayerSpeed(std::stof(lineFromFile));
+
+		file >> lineFromFile;
+		m_player.SetRadius(static_cast<uint16_t>(std::stoi(lineFromFile)));
+
+		file >> lineFromFile;
+		m_player.SetIsCollision(static_cast<bool>(std::stoi(lineFromFile)));
+
+		file >> lineFromFile;
+		m_bar->SetScoreText(std::stoi(lineFromFile));
+	}
+
+	file.close();
+
+}
+
+void PlayState::WriteLifeInFile() {
+
+	std::ifstream fileInput("stats.txt");
+	std::stringstream buffer;
+	buffer << fileInput.rdbuf();
+	std::string str = buffer.str();
+
+	str[0] = '0' + m_player.GetNumberOfLives();
+
+	std::ofstream fileOutput("stats.txt");
+
+	fileOutput << str;
+
+	fileInput.close();
+	fileOutput.close();
 }
 
 void PlayState::DeleteMusicBuffer()
@@ -37,28 +108,32 @@ void PlayState::CreateMap()
 	const uint16_t tileSize = 48;
 
 	m_map.CreateTilesOnMap(sf::Vector2u(tileSize, tileSize));
+
+	m_map.GenerateRandomTeleport();
 }
 
 void PlayState::CheckForCollision()
 {
-	const uint32_t numberOfBlocks = 289;
-	if (m_player.GetIsCollision() == true) {
+	const uint16_t numberOfBlocks = 17 * 17;
+	
+	if (m_player.GetIsCollision() == true)
+	{
 		for (uint16_t blockIndex = 0; blockIndex < numberOfBlocks; blockIndex++)
 		{
-			EBlockType currentBlockType = m_map.GetBlock(blockIndex).GetBlockType();
+			const EBlockType currentBlockType = m_map.GetBlock(blockIndex).GetBlockType();
 
 			if (currentBlockType != EBlockType::EmptyBlock && currentBlockType != EBlockType::PortalBlock && currentBlockType != EBlockType::PowerUpBlock
-				&& currentBlockType != EBlockType::FireBlock)
+				&& currentBlockType != EBlockType::FireBlock && currentBlockType != EBlockType::PortalVisibleBlock)
 			{
 				m_map.GetBlock(blockIndex).GetCollider().CheckCollision(*&m_player.GetCollider());
 			}
 		}
 	}
-	else {
-
+	else 
+	{
 		for (uint16_t blockIndex = 0; blockIndex < numberOfBlocks; blockIndex++)
 		{
-			EBlockType currentBlockType = m_map.GetBlock(blockIndex).GetBlockType();
+			const EBlockType currentBlockType = m_map.GetBlock(blockIndex).GetBlockType();
 
 			if (currentBlockType != EBlockType::EmptyBlock && currentBlockType != EBlockType::PortalBlock && currentBlockType != EBlockType::PowerUpBlock
 				&& currentBlockType != EBlockType::FireBlock && currentBlockType != EBlockType::StoneBlock)
@@ -74,11 +149,11 @@ void PlayState::StatusUpdate(const PowerType& powerUp)
 	switch (powerUp)
 	{
 	case PowerType::BombUp:
-		m_player.SetNumberOfBombs(1);
+		m_player.AddNumberOfBombs(1);
 		break;
 
 	case PowerType::GoldBomb:
-		m_player.SetNumberOfBombs(9);
+		m_player.AddNumberOfBombs(9);
 		break;
 
 	case PowerType::BlockPasser:
@@ -86,19 +161,19 @@ void PlayState::StatusUpdate(const PowerType& powerUp)
 		break;
 
 	case PowerType::Fire:
-		m_player.SetRadius(1);
+		m_player.AddRadius(1);
 		break;
 
 	case PowerType::GoldFire:
-		m_player.SetRadius(9);
+		m_player.AddRadius(9);
 		break;
 
 	case PowerType::Skate:
-		m_player.SetPlayerSpeed(1.8f);
+		m_player.AddPlayerSpeed(0.2f);
 		break;
 
 	case PowerType::GoldSkate:
-		m_player.SetPlayerSpeed(3.0f);
+		m_player.AddPlayerSpeed(2.0f);
 		break;
 
 	case PowerType::Clock:
@@ -106,7 +181,7 @@ void PlayState::StatusUpdate(const PowerType& powerUp)
 		break;
 
 	case PowerType::LifeUp:
-		m_player.SetLife(1);
+		m_player.AddLife(1);
 		m_bar->SetLifeText(m_player.GetNumberOfLives());
 		break;
 
@@ -153,15 +228,20 @@ void PlayState::CreateExplosions()
 	{
 		InsertExplosion(m_map.m_bombsList[m_map.m_bombsList.size() - 1]);
 	}
+	
 	if (!m_map.m_bombsList.empty())
 	{
 		if (m_map.m_bombsList.front()->GetBombStatus() == true)
+		{
 			DrawExplosion(m_map.m_bombsList[0], 0);
+		}
+		
 		if (m_map.m_bombsList.size() > 1)
 		{
 			for (uint16_t index = 1; index < m_map.m_bombsList.size(); index++)
 			{
 				m_map.EarlyExplode(m_map.m_bombsList[index]);
+				
 				if (m_map.m_bombsList[index]->GetBombStatus() == true)
 				{
 					DrawExplosion(m_map.m_bombsList[index], index);
@@ -184,13 +264,12 @@ void PlayState::VerifyEnemyDead(const Enemy* enemy)
 
 bool PlayState::IsPlayerOnTeleport()
 {
+	const auto playerPositionIndexColumn = static_cast<uint16_t>((m_player.GetPositionX() + 24.f) / 48.f);
+	const auto playerPositionIndexLine = static_cast<uint16_t>((m_player.GetPositionY() + 24.f) / 48.f);
 
-	int playerPositionIndexColumn = (m_player.GetPositionX() + 24) / 48;
-	int playerPositionIndexLine = (m_player.GetPositionY() + 24) / 48;
+	const uint16_t indexPlayer = playerPositionIndexLine * 17 + playerPositionIndexColumn;
 
-	uint16_t IndexPlayer = playerPositionIndexLine * 17 + playerPositionIndexColumn;
-
-	if (m_map.GetBlock(IndexPlayer).GetBlockType() == EBlockType::PortalBlock)
+	if (m_map.GetBlock(indexPlayer).GetBlockType() == EBlockType::PortalBlock)
 	{
 		return true;
 	}
@@ -200,10 +279,10 @@ bool PlayState::IsPlayerOnTeleport()
 
 bool PlayState::IsPlayerOnPowerUp() {
 
-	int playerPositionIndexColumn = (m_player.GetPositionX() + 24) / 48;
-	int playerPositionIndexLine = (m_player.GetPositionY() + 24) / 48;
+	const auto playerPositionIndexColumn = static_cast<uint16_t>((m_player.GetPositionX() + 24.f) / 48.f);
+	const auto playerPositionIndexLine = static_cast<uint16_t>((m_player.GetPositionY() + 24.f) / 48.f);
 
-	uint16_t indexPlayer = playerPositionIndexLine * 17 + playerPositionIndexColumn;
+	const uint16_t indexPlayer = playerPositionIndexLine * 17 + playerPositionIndexColumn;
 
 	if (m_map.GetBlock(indexPlayer).GetBlockType() == EBlockType::PowerUpBlock)
 	{
@@ -217,18 +296,18 @@ bool PlayState::IsTimeZero()
 {
 	if (m_bar->GetTimeFinished() == true)
 	{
-		m_player.SetLife(-1);
 		return true;
 	}
+	
 	return false;
 }
 
 void PlayState::IsPlayerOnFireBlock()
 {
-	int playerPositionIndexColumn = (m_player.GetPositionX() + 24) / 48;
-	int playerPositionIndexLine = (m_player.GetPositionY() + 24) / 48;
+	const auto playerPositionIndexColumn = static_cast<uint16_t>((m_player.GetPositionX() + 24.f) / 48.f);
+	const auto playerPositionIndexLine = static_cast<uint16_t>((m_player.GetPositionY() + 24.f) / 48.f);
 
-	uint16_t indexPlayer = playerPositionIndexLine * 17 + playerPositionIndexColumn;
+	const uint16_t indexPlayer = playerPositionIndexLine * 17 + playerPositionIndexColumn;
 
 	if (m_map.GetBlock(indexPlayer).GetBlockType() == EBlockType::FireBlock)
 	{
@@ -263,11 +342,9 @@ bool PlayState::IsPlayerOnEnemy()
 
 void PlayState::Pause()
 {
-
 	DeleteMusicBuffer();
-
-
-	std::cout << "PlayState Pause" << std::endl;
+	m_clock.Pause();
+	globalLogger.LogData("Game Paused", LogSeverity::info);
 }
 
 void PlayState::Resume()
@@ -276,58 +353,56 @@ void PlayState::Resume()
 
 	m_soundBuffer = new sf::SoundBuffer;
 	m_soundBuffer->loadFromFile("../_external/audio/play.flac");
-
 	m_sound = new sf::Sound;
 	m_sound->setBuffer(*m_soundBuffer);
-
 	m_sound->play();
-
-	std::cout << "PlayState Resume" << std::endl;
+	globalLogger.LogData("Game Resumed", LogSeverity::info);
 }
 
 void PlayState::Update()
 {
-	sf::Event event;
 	m_clock.Resume();
+	
+	sf::Event event;
+	
 	bool pressed = false;
 
 	while (m_window.pollEvent(event))
 	{
-
 		if (event.type == sf::Event::Resized)
 		{
-			auto window_width = event.size.width;
-			auto window_height = event.size.height;
+			const auto windowWidth = static_cast<float>(event.size.width);
+			const auto windowHeight = static_cast<float>(event.size.height);
 
-			float new_width = window_height;
-			float new_height = window_width;
-			float offset_width = static_cast<float>(window_width - new_width) / 2.0;
-			float offset_height = static_cast<float>(window_height - new_height) / 2.0;
+			const float newWidth = windowHeight;
+			const float newHeight = windowWidth;
+			const float offset_width = (windowWidth - newWidth) / 2.0f;
+			const float offset_height = (windowHeight - newHeight) / 2.0f;
 
 			sf::View view = m_window.getDefaultView();
 
-			if (window_width < 816 || window_height < 864)
+			if (windowWidth < m_windowSize || windowHeight < m_windowSize)
 			{
-				view.setViewport(sf::FloatRect(0.f, 0.f, 816, 864));
-				m_window.setSize(sf::Vector2u(864, 864));
+				view.setViewport(sf::FloatRect(0.f, 0.f, m_windowSize, m_windowSize));
+				m_window.setSize(sf::Vector2u(static_cast<uint16_t>(m_windowSize), static_cast<uint16_t>(m_windowSize)));
 				m_window.setPosition(sf::Vector2i(400, 200));
 			}
 			else
 			{
-				if (window_width >= window_height)
+				if (windowWidth >= windowHeight)
 				{
-					view.setViewport(sf::FloatRect(offset_width / window_width, 0.0, new_width / window_width, 1.0));
+					view.setViewport(sf::FloatRect(offset_width / windowWidth, 0.0, newWidth / windowWidth, 1.0));
 				}
 				else
 				{
-					view.setViewport(sf::FloatRect(0.0, offset_height / window_height, 1.0, new_height / window_height));
+					view.setViewport(sf::FloatRect(0.0, offset_height / windowHeight, 1.0, newHeight / windowHeight));
 				}
 
 			}
 
 			m_window.setView(view);
 		}
-
+		
 		switch (event.type)
 		{
 		case sf::Event::Closed:
@@ -342,18 +417,22 @@ void PlayState::Update()
 				if (pressed == false)
 				{
 					pressed = true;
+					remove("Stats.txt");
 					m_next = StateMachine::Build<MenuState>(m_machine, m_window, false);	
 				}
 				break;
+				
 			case sf::Keyboard::Space:
-				m_map.GenerateBombs(m_player.GetPlayerShape().getPosition(), m_player.GetRadiusStatus(), m_clock.GetElapsedTime().asSeconds(), m_player.GetMaxNoBombs());
+				m_map.GenerateBombs(m_player.GetPlayerShape().getPosition(), m_player.GetRadiusStatus(), m_clock.GetElapsedTime().asSeconds(), m_player.GetMaxNumberOfBombs());
 				break;
-			case sf::Keyboard::K:
+
+			case sf::Keyboard::G:
 				if (m_map.GetDetonator() == true)
 				{
 					m_map.DetonateAllBombs();
 				}
 				break;
+
 			default:
 				break;
 			}
@@ -369,37 +448,45 @@ void PlayState::Draw()
 {
 	m_window.clear();
 
-	float elapsedTime = m_clock.GetElapsedTime().asSeconds();
+	const float elapsedTime = m_clock.GetElapsedTime().asSeconds();
 
 	m_window.draw(m_map);
 	m_map.SetElapsedTime(elapsedTime);
 	m_bar->SetElapsedTime(elapsedTime);
 	m_bar->CalculateAndCheck();
 
-	if (m_map.IsPortalGenerate() == false)
-		m_map.GenerateRandomTeleport();
-
-	if (m_map.GetNoBombsDisplayed() == m_player.GetMaxNoBombs())
+	if (m_map.IsPortalGenerate() == true && m_map.GetNumberOfMonsters() == 0)
+	{
+		m_map.IsPortal();
+	}
+	
+	if (m_map.GetNumberOfBombsDisplayed() == m_player.GetMaxNumberOfBombs())
+	{
 		m_player.SetCanPlaceBomb(false);
+	}
 
 	CreateExplosions();
 
 	IsPlayerOnFireBlock();
+	
 	if (IsTimeZero() || m_wasPlayerOnFire == true || IsPlayerOnEnemy() == true)
 	{
-		m_player.DeadAnimation(elapsedTime);
+		m_player.DeadAnimation(m_clock.GetElapsedTime().asSeconds());
 		m_window.draw(m_player.GetPlayerShape());
+		
 		if (m_player.GetIsDead() == true)
 		{
-			LevelState::m_currentLevel--;
-			m_next = StateMachine::Build<LevelState>(m_machine, m_window, false);
+			m_player.TakeLife();
+			WriteLifeInFile();
+			if (m_player.GetNumberOfLives() != 0)
+				m_next = StateMachine::Build<LevelState>(m_machine, m_window, false);
 		}
 	}
 	else
 	{
 		m_window.draw(m_player.GetPlayerShape());
 		m_player.MovePlayer(elapsedTime);
-		if(!m_map.m_bombsList.empty())
+		if (!m_map.m_bombsList.empty())
 			m_map.CreateBombsCollision(m_player.GetPlayerShape().getPosition());
 		m_map.MoveEnemy();
 		for (auto& enemy : m_map.GetEnemy())
@@ -409,20 +496,23 @@ void PlayState::Draw()
 		CheckForCollision();
 	}
 
-	if (IsPlayerOnPowerUp() == true) {
+	if (IsPlayerOnPowerUp() == true) 
+	{
 		StatusUpdate(m_map.GetPower()->GetPowerType());
 		m_map.RemovePowerUp();
 		m_map.ClearBlock(m_player.GetPlayerShape().getPosition());
-		std::cout << "sters" << "\n";
 	}
 
 	if (IsPlayerOnTeleport())
 	{
+		WriteStatsInFile();
+		LevelState::m_currentLevel++;
 		m_next = StateMachine::Build<LevelState>(m_machine, m_window, false);
 	}
 
 	if (m_player.GetNumberOfLives() == 0)
 	{
+		remove("stats.txt");
 		m_next = StateMachine::Build<GameLostState>(m_machine, m_window, false);
 	}
 
