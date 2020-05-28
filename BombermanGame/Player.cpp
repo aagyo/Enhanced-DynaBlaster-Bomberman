@@ -3,7 +3,7 @@
 
 #include <SFML/Window/Keyboard.hpp>
 
-Player::Player() : m_playerShape(sf::Vector2f(m_playerHeight, m_playerWidth)), m_numberOfLives(3), m_maximumNumberOfBombs(4),
+Player::Player() : m_playerShape(sf::Vector2f(m_playerHeight, m_playerWidth)), m_numberOfLives(3), m_maximumNumberOfBombs(2),
 	m_radiusStatus(2), m_isCollision(true), m_playerSpeed(1.2f)
 {
 	SetStartPosition();

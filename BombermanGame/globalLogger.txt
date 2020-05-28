@@ -592,3 +592,335 @@
 [2020-05-18 20:56:57] [INFO] Game Paused
 [2020-05-18 20:56:58] [INFO] Intro State
 [2020-05-18 20:56:59] [DEBUG] **************GAME CLOSED****************
+[2020-05-28 16:35:22] [INFO] 
+[2020-05-28 16:35:22] [DEBUG] **************New Game Instance*************
+[2020-05-28 16:35:22] [INFO] 
+[2020-05-28 16:35:22] [INFO] Logger has been initialized
+[2020-05-28 16:35:25] [INFO] Intro State
+[2020-05-28 16:35:27] [INFO] LevelState
+[2020-05-28 16:35:27] [INFO] New Level:
+[2020-05-28 16:35:27] [INFO] 0
+[2020-05-28 16:35:29] [INFO] Playing state
+[2020-05-28 16:36:25] [INFO] LevelState
+[2020-05-28 16:36:25] [INFO] New Level:
+[2020-05-28 16:36:25] [INFO] 0
+[2020-05-28 16:36:25] [INFO] Game Paused
+[2020-05-28 16:36:28] [INFO] Playing state
+[2020-05-28 16:45:35] [INFO] 
+[2020-05-28 16:45:35] [DEBUG] **************New Game Instance*************
+[2020-05-28 16:45:35] [INFO] 
+[2020-05-28 16:45:35] [INFO] Logger has been initialized
+[2020-05-28 16:45:36] [INFO] Intro State
+[2020-05-28 16:45:38] [INFO] LevelState
+[2020-05-28 16:45:38] [INFO] New Level:
+[2020-05-28 16:45:38] [INFO] 0
+[2020-05-28 16:45:40] [INFO] Playing state
+[2020-05-28 16:46:36] [INFO] LevelState
+[2020-05-28 16:46:36] [INFO] New Level:
+[2020-05-28 16:46:36] [INFO] 0
+[2020-05-28 16:46:36] [INFO] Game Paused
+[2020-05-28 16:46:38] [INFO] Playing state
+[2020-05-28 16:46:43] [INFO] LevelState
+[2020-05-28 16:46:43] [INFO] New Level:
+[2020-05-28 16:46:43] [INFO] 0
+[2020-05-28 16:46:43] [INFO] Game Paused
+[2020-05-28 16:46:44] [INFO] Playing state
+[2020-05-28 16:46:49] [INFO] LevelState
+[2020-05-28 16:46:49] [INFO] New Level:
+[2020-05-28 16:46:49] [INFO] 0
+[2020-05-28 16:46:49] [INFO] Game Paused
+[2020-05-28 16:46:51] [INFO] Playing state
+[2020-05-28 16:47:46] [INFO] LevelState
+[2020-05-28 16:47:46] [INFO] New Level:
+[2020-05-28 16:47:46] [INFO] 0
+[2020-05-28 16:47:46] [INFO] Game Paused
+[2020-05-28 16:47:49] [INFO] Playing state
+[2020-05-28 16:47:55] [INFO] LevelState
+[2020-05-28 16:47:55] [INFO] New Level:
+[2020-05-28 16:47:55] [INFO] 0
+[2020-05-28 16:47:55] [INFO] Game Paused
+[2020-05-28 16:47:56] [INFO] Playing state
+[2020-05-28 16:48:02] [INFO] LevelState
+[2020-05-28 16:48:02] [INFO] New Level:
+[2020-05-28 16:48:02] [INFO] 0
+[2020-05-28 16:48:02] [INFO] Game Paused
+[2020-05-28 16:48:04] [INFO] Playing state
+[2020-05-28 16:49:51] [INFO] 
+[2020-05-28 16:49:51] [DEBUG] **************New Game Instance*************
+[2020-05-28 16:49:51] [INFO] 
+[2020-05-28 16:49:51] [INFO] Logger has been initialized
+[2020-05-28 16:49:53] [INFO] Intro State
+[2020-05-28 16:49:55] [INFO] LevelState
+[2020-05-28 16:49:55] [INFO] New Level:
+[2020-05-28 16:49:55] [INFO] 0
+[2020-05-28 16:49:56] [INFO] Playing state
+[2020-05-28 16:53:26] [INFO] LevelState
+[2020-05-28 16:53:26] [INFO] New Level:
+[2020-05-28 16:53:26] [INFO] 0
+[2020-05-28 16:53:26] [INFO] Game Paused
+[2020-05-28 16:53:36] [INFO] Playing state
+[2020-05-28 16:54:29] [INFO] Game Paused
+[2020-05-28 16:54:29] [INFO] Intro State
+[2020-05-28 16:54:31] [DEBUG] **************GAME CLOSED****************
+[2020-05-28 18:08:15] [INFO] 
+[2020-05-28 18:08:15] [DEBUG] **************New Game Instance*************
+[2020-05-28 18:08:15] [INFO] 
+[2020-05-28 18:08:15] [INFO] Logger has been initialized
+[2020-05-28 18:08:17] [INFO] Intro State
+[2020-05-28 18:08:18] [INFO] LevelState
+[2020-05-28 18:08:18] [INFO] New Level:
+[2020-05-28 18:08:18] [INFO] 0
+[2020-05-28 18:08:20] [INFO] Playing state
+[2020-05-28 18:09:10] [INFO] Game Paused
+[2020-05-28 18:09:11] [INFO] Intro State
+[2020-05-28 18:09:13] [DEBUG] **************GAME CLOSED****************
+[2020-05-28 21:21:32] [INFO] 
+[2020-05-28 21:21:32] [DEBUG] **************New Game Instance*************
+[2020-05-28 21:21:32] [INFO] 
+[2020-05-28 21:21:32] [INFO] Logger has been initialized
+[2020-05-28 21:21:34] [INFO] Intro State
+[2020-05-28 21:21:36] [INFO] LevelState
+[2020-05-28 21:21:36] [INFO] New Level:
+[2020-05-28 21:21:36] [INFO] 0
+[2020-05-28 21:21:37] [INFO] Playing state
+[2020-05-28 21:24:16] [INFO] LevelState
+[2020-05-28 21:24:16] [INFO] New Level:
+[2020-05-28 21:24:16] [INFO] 0
+[2020-05-28 21:24:16] [INFO] Game Paused
+[2020-05-28 21:24:18] [INFO] Playing state
+[2020-05-28 21:25:35] [INFO] 
+[2020-05-28 21:25:35] [DEBUG] **************New Game Instance*************
+[2020-05-28 21:25:35] [INFO] 
+[2020-05-28 21:25:35] [INFO] Logger has been initialized
+[2020-05-28 21:25:36] [INFO] Intro State
+[2020-05-28 21:25:40] [INFO] LevelState
+[2020-05-28 21:25:40] [INFO] New Level:
+[2020-05-28 21:25:40] [INFO] 0
+[2020-05-28 21:25:41] [INFO] Playing state
+[2020-05-28 21:25:50] [INFO] LevelState
+[2020-05-28 21:25:50] [INFO] New Level:
+[2020-05-28 21:25:50] [INFO] 0
+[2020-05-28 21:25:50] [INFO] Game Paused
+[2020-05-28 21:25:52] [INFO] Playing state
+[2020-05-28 21:35:18] [INFO] 
+[2020-05-28 21:35:18] [DEBUG] **************New Game Instance*************
+[2020-05-28 21:35:18] [INFO] 
+[2020-05-28 21:35:18] [INFO] Logger has been initialized
+[2020-05-28 21:35:21] [INFO] Intro State
+[2020-05-28 21:35:22] [INFO] LevelState
+[2020-05-28 21:35:22] [INFO] New Level:
+[2020-05-28 21:35:22] [INFO] 0
+[2020-05-28 21:35:23] [INFO] Playing state
+[2020-05-28 21:35:29] [INFO] LevelState
+[2020-05-28 21:35:29] [INFO] New Level:
+[2020-05-28 21:35:29] [INFO] 0
+[2020-05-28 21:35:29] [INFO] Game Paused
+[2020-05-28 21:35:42] [INFO] Playing state
+[2020-05-28 21:38:18] [INFO] LevelState
+[2020-05-28 21:38:18] [INFO] New Level:
+[2020-05-28 21:38:18] [INFO] 0
+[2020-05-28 21:38:18] [INFO] Game Paused
+[2020-05-28 21:38:20] [INFO] Playing state
+[2020-05-28 21:39:17] [INFO] LevelState
+[2020-05-28 21:39:17] [INFO] New Level:
+[2020-05-28 21:39:17] [INFO] 0
+[2020-05-28 21:39:17] [INFO] Game Paused
+[2020-05-28 21:39:29] [INFO] Playing state
+[2020-05-28 21:42:10] [INFO] LevelState
+[2020-05-28 21:42:10] [INFO] New Level:
+[2020-05-28 21:42:10] [INFO] 0
+[2020-05-28 21:42:10] [INFO] Game Paused
+[2020-05-28 21:43:10] [INFO] 
+[2020-05-28 21:43:10] [DEBUG] **************New Game Instance*************
+[2020-05-28 21:43:10] [INFO] 
+[2020-05-28 21:43:10] [INFO] Logger has been initialized
+[2020-05-28 21:43:12] [INFO] Intro State
+[2020-05-28 21:43:14] [INFO] LevelState
+[2020-05-28 21:43:14] [INFO] New Level:
+[2020-05-28 21:43:14] [INFO] 0
+[2020-05-28 21:43:15] [INFO] Playing state
+[2020-05-28 22:05:17] [INFO] 
+[2020-05-28 22:05:17] [DEBUG] **************New Game Instance*************
+[2020-05-28 22:05:17] [INFO] 
+[2020-05-28 22:05:17] [INFO] Logger has been initialized
+[2020-05-28 22:05:20] [INFO] Intro State
+[2020-05-28 22:05:40] [INFO] LevelState
+[2020-05-28 22:05:40] [INFO] New Level:
+[2020-05-28 22:05:40] [INFO] 0
+[2020-05-28 22:05:41] [INFO] Playing state
+[2020-05-28 22:05:50] [INFO] LevelState
+[2020-05-28 22:05:50] [INFO] New Level:
+[2020-05-28 22:05:50] [INFO] 0
+[2020-05-28 22:05:50] [INFO] Game Paused
+[2020-05-28 22:05:51] [INFO] Playing state
+[2020-05-28 22:06:11] [INFO] LevelState
+[2020-05-28 22:06:11] [INFO] New Level:
+[2020-05-28 22:06:11] [INFO] 0
+[2020-05-28 22:06:11] [INFO] Game Paused
+[2020-05-28 22:06:13] [INFO] Playing state
+[2020-05-28 22:06:16] [INFO] Game Paused
+[2020-05-28 22:06:20] [INFO] Intro State
+[2020-05-28 22:06:20] [DEBUG] **************GAME CLOSED****************
+[2020-05-28 22:07:30] [INFO] 
+[2020-05-28 22:07:30] [DEBUG] **************New Game Instance*************
+[2020-05-28 22:07:30] [INFO] 
+[2020-05-28 22:07:30] [INFO] Logger has been initialized
+[2020-05-28 22:07:32] [INFO] Intro State
+[2020-05-28 22:07:34] [INFO] LevelState
+[2020-05-28 22:07:34] [INFO] New Level:
+[2020-05-28 22:07:34] [INFO] 0
+[2020-05-28 22:07:35] [INFO] Playing state
+[2020-05-28 22:08:43] [INFO] LevelState
+[2020-05-28 22:08:43] [INFO] New Level:
+[2020-05-28 22:08:43] [INFO] 0
+[2020-05-28 22:08:43] [INFO] Game Paused
+[2020-05-28 22:08:45] [INFO] Playing state
+[2020-05-28 22:09:17] [INFO] LevelState
+[2020-05-28 22:09:17] [INFO] New Level:
+[2020-05-28 22:09:17] [INFO] 1
+[2020-05-28 22:09:17] [INFO] Game Paused
+[2020-05-28 22:09:19] [INFO] Playing state
+[2020-05-28 22:09:21] [INFO] Game Paused
+[2020-05-28 22:09:22] [INFO] Intro State
+[2020-05-28 22:09:23] [DEBUG] **************GAME CLOSED****************
+[2020-05-28 22:16:11] [INFO] 
+[2020-05-28 22:16:11] [DEBUG] **************New Game Instance*************
+[2020-05-28 22:16:11] [INFO] 
+[2020-05-28 22:16:11] [INFO] Logger has been initialized
+[2020-05-28 22:16:13] [INFO] Intro State
+[2020-05-28 22:16:16] [INFO] LevelState
+[2020-05-28 22:16:16] [INFO] New Level:
+[2020-05-28 22:16:16] [INFO] 0
+[2020-05-28 22:16:17] [INFO] Playing state
+[2020-05-28 22:16:23] [INFO] LevelState
+[2020-05-28 22:16:23] [INFO] New Level:
+[2020-05-28 22:16:23] [INFO] 0
+[2020-05-28 22:16:23] [INFO] Game Paused
+[2020-05-28 22:16:25] [INFO] Playing state
+[2020-05-28 22:16:32] [INFO] LevelState
+[2020-05-28 22:16:32] [INFO] New Level:
+[2020-05-28 22:16:32] [INFO] 0
+[2020-05-28 22:16:32] [INFO] Game Paused
+[2020-05-28 22:16:34] [INFO] Playing state
+[2020-05-28 22:16:39] [INFO] LevelState
+[2020-05-28 22:16:39] [INFO] New Level:
+[2020-05-28 22:16:39] [INFO] 0
+[2020-05-28 22:16:39] [INFO] Game Paused
+[2020-05-28 22:16:41] [INFO] Playing state
+[2020-05-28 22:19:44] [INFO] LevelState
+[2020-05-28 22:19:44] [INFO] New Level:
+[2020-05-28 22:19:44] [INFO] 0
+[2020-05-28 22:19:44] [INFO] Game Paused
+[2020-05-28 22:23:35] [INFO] 
+[2020-05-28 22:23:35] [DEBUG] **************New Game Instance*************
+[2020-05-28 22:23:35] [INFO] 
+[2020-05-28 22:23:35] [INFO] Logger has been initialized
+[2020-05-28 22:23:37] [INFO] Intro State
+[2020-05-28 22:23:40] [INFO] LevelState
+[2020-05-28 22:23:40] [INFO] New Level:
+[2020-05-28 22:23:40] [INFO] 0
+[2020-05-28 22:23:41] [INFO] Playing state
+[2020-05-28 22:26:54] [INFO] LevelState
+[2020-05-28 22:26:54] [INFO] New Level:
+[2020-05-28 22:26:54] [INFO] 1
+[2020-05-28 22:26:54] [INFO] Game Paused
+[2020-05-28 22:27:16] [INFO] 
+[2020-05-28 22:27:16] [DEBUG] **************New Game Instance*************
+[2020-05-28 22:27:16] [INFO] 
+[2020-05-28 22:27:16] [INFO] Logger has been initialized
+[2020-05-28 22:27:18] [INFO] Intro State
+[2020-05-28 22:27:20] [INFO] LevelState
+[2020-05-28 22:27:20] [INFO] New Level:
+[2020-05-28 22:27:20] [INFO] 0
+[2020-05-28 22:27:21] [INFO] Playing state
+[2020-05-28 22:33:27] [INFO] 
+[2020-05-28 22:33:27] [DEBUG] **************New Game Instance*************
+[2020-05-28 22:33:27] [INFO] 
+[2020-05-28 22:33:27] [INFO] Logger has been initialized
+[2020-05-28 22:33:29] [INFO] Intro State
+[2020-05-28 22:33:31] [INFO] LevelState
+[2020-05-28 22:33:31] [INFO] New Level:
+[2020-05-28 22:33:31] [INFO] 0
+[2020-05-28 22:33:32] [INFO] Playing state
+[2020-05-28 22:34:07] [INFO] LevelState
+[2020-05-28 22:34:07] [INFO] New Level:
+[2020-05-28 22:34:07] [INFO] 0
+[2020-05-28 22:34:07] [INFO] Game Paused
+[2020-05-28 22:34:09] [INFO] Playing state
+[2020-05-28 22:39:18] [INFO] 
+[2020-05-28 22:39:18] [DEBUG] **************New Game Instance*************
+[2020-05-28 22:39:18] [INFO] 
+[2020-05-28 22:39:18] [INFO] Logger has been initialized
+[2020-05-28 22:39:20] [INFO] Intro State
+[2020-05-28 22:39:22] [INFO] LevelState
+[2020-05-28 22:39:22] [INFO] New Level:
+[2020-05-28 22:39:22] [INFO] 0
+[2020-05-28 22:39:23] [INFO] Playing state
+[2020-05-28 22:40:09] [INFO] LevelState
+[2020-05-28 22:40:09] [INFO] New Level:
+[2020-05-28 22:40:09] [INFO] 1
+[2020-05-28 22:40:09] [INFO] Game Paused
+[2020-05-28 22:40:10] [INFO] Playing state
+[2020-05-28 22:41:07] [INFO] LevelState
+[2020-05-28 22:41:07] [INFO] New Level:
+[2020-05-28 22:41:07] [INFO] 1
+[2020-05-28 22:41:07] [INFO] Game Paused
+[2020-05-28 22:41:08] [INFO] Playing state
+[2020-05-28 22:42:32] [INFO] LevelState
+[2020-05-28 22:42:32] [INFO] New Level:
+[2020-05-28 22:42:32] [INFO] 2
+[2020-05-28 22:42:32] [INFO] Game Paused
+[2020-05-28 22:42:35] [INFO] Playing state
+[2020-05-28 22:47:26] [INFO] 
+[2020-05-28 22:47:26] [DEBUG] **************New Game Instance*************
+[2020-05-28 22:47:26] [INFO] 
+[2020-05-28 22:47:26] [INFO] Logger has been initialized
+[2020-05-28 22:47:28] [INFO] Intro State
+[2020-05-28 22:47:30] [INFO] LevelState
+[2020-05-28 22:47:30] [INFO] New Level:
+[2020-05-28 22:47:30] [INFO] 0
+[2020-05-28 22:47:31] [INFO] Playing state
+[2020-05-28 22:49:18] [INFO] LevelState
+[2020-05-28 22:49:18] [INFO] New Level:
+[2020-05-28 22:49:18] [INFO] 1
+[2020-05-28 22:49:18] [INFO] Game Paused
+[2020-05-28 22:49:21] [INFO] Playing state
+[2020-05-28 22:49:47] [INFO] LevelState
+[2020-05-28 22:49:47] [INFO] New Level:
+[2020-05-28 22:49:47] [INFO] 1
+[2020-05-28 22:49:47] [INFO] Game Paused
+[2020-05-28 22:49:48] [INFO] Playing state
+[2020-05-28 22:51:31] [INFO] LevelState
+[2020-05-28 22:51:31] [INFO] New Level:
+[2020-05-28 22:51:31] [INFO] 1
+[2020-05-28 22:51:31] [INFO] Game Paused
+[2020-05-28 22:51:33] [INFO] Playing state
+[2020-05-28 22:52:06] [INFO] Game Paused
+[2020-05-28 22:52:33] [INFO] Intro State
+[2020-05-28 22:52:35] [INFO] LevelState
+[2020-05-28 22:52:35] [INFO] New Level:
+[2020-05-28 22:52:35] [INFO] 0
+[2020-05-28 22:52:37] [INFO] Playing state
+[2020-05-28 22:54:21] [INFO] LevelState
+[2020-05-28 22:54:21] [INFO] New Level:
+[2020-05-28 22:54:21] [INFO] 0
+[2020-05-28 22:54:21] [INFO] Game Paused
+[2020-05-28 22:54:24] [INFO] Playing state
+[2020-05-28 22:55:51] [INFO] LevelState
+[2020-05-28 22:55:51] [INFO] New Level:
+[2020-05-28 22:55:51] [INFO] 1
+[2020-05-28 22:55:51] [INFO] Game Paused
+[2020-05-28 22:55:52] [INFO] Playing state
+[2020-05-28 22:57:32] [INFO] LevelState
+[2020-05-28 22:57:32] [INFO] New Level:
+[2020-05-28 22:57:32] [INFO] 2
+[2020-05-28 22:57:32] [INFO] Game Paused
+[2020-05-28 22:57:36] [INFO] Playing state
+[2020-05-28 22:57:41] [INFO] LevelState
+[2020-05-28 22:57:41] [INFO] New Level:
+[2020-05-28 22:57:41] [INFO] 2
+[2020-05-28 22:57:41] [INFO] Game Paused
+[2020-05-28 22:57:47] [INFO] Playing state
+[2020-05-28 22:57:55] [INFO] Game Paused
+[2020-05-28 22:57:57] [INFO] Intro State
+[2020-05-28 22:57:58] [DEBUG] **************GAME CLOSED****************

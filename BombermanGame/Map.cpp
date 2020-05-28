@@ -106,7 +106,10 @@ bool Map::IsPortalGenerate()
 
 void Map::IsPortal()
 {
-	m_blocks[m_portalIndex].SetBlockType(EBlockType::PortalBlock);
+	if (m_portal->GetIsVisible() == true)
+	{
+		m_blocks[m_portalIndex].SetBlockType(EBlockType::PortalBlock);
+	}
 }
 
 void Map::GenerateRandomPowerUp(const sf::Vector2f& position)
@@ -403,7 +406,7 @@ void Map::ExplosionMarker(const sf::Vector2f& position)
 		}
 	}
 
-	else if (m_blocks[indexBlock].GetBlockType() == EBlockType::EmptyBlock)
+	else if (m_blocks[indexBlock].GetBlockType() == EBlockType::EmptyBlock || m_blocks[indexBlock].GetBlockType() == EBlockType::BombBlock)
 	{
 		m_blocks[indexBlock].SetBlockType(EBlockType::FireBlock);
 		fireBlocks.push_back(indexBlock);
@@ -418,6 +421,11 @@ void Map::ExplosionMarker(const sf::Vector2f& position)
 		ClearBlock(position);
 	}
 	else if (m_blocks[indexBlock].GetBlockType() == EBlockType::StoneBlock && m_blocks[indexBlock].IsPortal() == true)
+	{
+		m_portal->SetIsVisible(true);
+		m_blocks[m_portalIndex].SetBlockType(EBlockType::PortalVisibleBlock);
+	}
+	else if (m_blocks[indexBlock].GetBlockType() == EBlockType::PortalBlock)
 	{
 		m_portal->SetIsVisible(true);
 		m_blocks[m_portalIndex].SetBlockType(EBlockType::PortalVisibleBlock);

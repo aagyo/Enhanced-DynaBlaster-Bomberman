@@ -15,7 +15,7 @@ MenuState::MenuState(StateMachine& machine, sf::RenderWindow& window, bool repla
 	if (m_bgTexture.loadFromFile("../_external/states/menustate.png") == false)
 	{
 		std::string Error;
-		Error = "Failed to load image ../_external/states/plm.png, Reason: unable to open file";
+		Error = "Failed to load image ../_external/states/menustate.png, Reason: unable to open file";
 		globalLogger.LogData(Error, LogSeverity::error);
 
 	}
